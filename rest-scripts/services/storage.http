@@ -1,0 +1,210 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
+# -------HTTP REST CLIENT -------
+# https://marketplace.visualstudio.com/items?itemName=humao.rest-client
+# 
+# Purpose: Sample requests for Storage Service
+
+# -----------------------
+# OAUTH (Variables)
+# -----------------------
+###
+@login_base = login.microsoftonline.com/{{TENANT_ID}}
+@oauth_token_host = {{login_base}}/oauth2/v2.0/token
+@scopes = {{CLIENT_ID}}/.default openid profile offline_access
+
+
+# -----------------------
+# OAUTH  refresh_token
+# -----------------------
+###
+# @name refresh
+POST https://{{oauth_token_host}} HTTP/1.1
+Content-Type: application/x-www-form-urlencoded
+Origin: {{DEVELOPER_PORTAL}}
+
+grant_type=refresh_token
+&client_id={{CLIENT_ID}}
+&refresh_token={{REFRESH_TOKEN}}
+&scope={{scopes}}
+
+
+# -----------------------
+# OAUTH (Variables)
+# -----------------------
+###
+@login_base = login.microsoftonline.com/{{TENANT_ID}}
+@oauth_token_host = {{login_base}}/oauth2/v2.0/token
+@scopes = {{CLIENT_ID}}/.default openid profile offline_access
+
+
+
+# -----------------------
+# API (Variables)
+# -----------------------
+###
+@access_token = {{refresh.response.body.access_token}}
+@ENDPOINT = https://{{HOST}}
+@STORAGE_HOST = {{ENDPOINT}}/api/storage/v2
+@LEGAL_HOST = {{ENDPOINT}}/api/legal/v1
+@tag = rest-testing-tag
+@kind = osdu:wks:reference-data--ProcessingParameterType:1.0.0
+
+# -----------------------
+# API: Version
+# -----------------------
+
+###
+# @name info
+GET {{STORAGE_HOST}}/info
+Authorization: Bearer {{access_token}}
+Accept: application/json
+
+
+# -----------------------
+# API: legal
+# -----------------------
+
+###
+# @name create_tag
+POST {{LEGAL_HOST}}/legaltags
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+data-partition-id: {{DATA_PARTITION}}
+
+{
+  "name": "{{tag}}",
+  "description": "This is a test tag from Rest Scripts",
+  "properties": {
+    "countryOfOrigin": [
+      "US"
+    ],
+    "contractId": "A1234",
+    "expirationDate": "2023-12-31",
+    "originator": "MyCompany",
+    "dataType": "Transferred Data",
+    "securityClassification": "Public",
+    "personalData": "No Personal Data",
+    "exportClassification": "EAR99"
+  }
+}
+
+
+###
+# @name getTag
+GET {{LEGAL_HOST}}/legaltags/{{DATA_PARTITION}}-{{tag}}
+Authorization: Bearer {{access_token}}
+Accept: application/json
+data-partition-id: {{DATA_PARTITION}}
+
+
+# -----------------------
+# API: storage
+# -----------------------
+
+###
+# @name getRecordIdByKind
+GET {{STORAGE_HOST}}/query/records?kind={{kind}}
+Authorization: Bearer {{access_token}}
+Accept: application/json
+data-partition-id: {{DATA_PARTITION}}
+
+@id = {{getRecordIdByKind.response.body.results[0]}}
+
+
+###
+# @name createRecord
+PUT {{STORAGE_HOST}}/records
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+data-partition-id: {{DATA_PARTITION}}
+
+[
+  {
+    "kind": "{{kind}}",
+    "acl": {
+      "viewers": [
+        "data.default.viewers@{{DATA_PARTITION}}.dataservices.energy"
+      ],
+      "owners": [
+        "data.default.owners@{{DATA_PARTITION}}.dataservices.energy"
+      ]
+    },
+    "legal": {
+      "legaltags": [
+        "{{DATA_PARTITION}}-{{tag}}"
+      ],
+      "otherRelevantDataCountries": [
+        "US"
+      ],
+      "status": "compliant"
+    },
+    "data": {
+      "Name": "QA Test Case 2",
+      "ID": "qatest",
+      "Code": "QA Test Case",
+      "Source": "osdu-tno-load-js"
+    }
+  }
+]
+
+@id = {{createRecord.response.body.recordIds[0]}}
+@version = {{createRecord.response.body.recordIdVersions[0]}}
+
+
+###
+# @name getRecord
+GET {{STORAGE_HOST}}/records/{{id}}
+Authorization: Bearer {{access_token}}
+Accept: application/json
+data-partition-id: {{DATA_PARTITION}}
+
+@recordversion = {{getRecord.response.body.version}}
+
+
+###
+# @name getRecordByVersion
+GET {{STORAGE_HOST}}/records/{{id}}/{{recordversion}}
+Authorization: Bearer {{access_token}}
+Accept: application/json
+data-partition-id: {{DATA_PARTITION}}
+
+###
+# @name listRecordVersions
+GET {{STORAGE_HOST}}/records/versions/{{id}}
+Authorization: Bearer {{access_token}}
+Accept: application/json
+data-partition-id: {{DATA_PARTITION}}
+
+
+###
+# @name queryRecordsPost
+POST {{STORAGE_HOST}}/query/records
+Authorization: Bearer {{access_token}}
+Accept: application/json
+Content-Type: application/json
+data-partition-id: {{DATA_PARTITION}}
+
+{
+  "records": [
+    "{{id}}"
+  ],
+  "attributes": [
+    "data.Name"
+  ]
+}
+
+###
+# @name deleteRecord
+POST {{STORAGE_HOST}}/records/{{id}}:delete
+Authorization: Bearer {{access_token}}
+Accept: application/json
+data-partition-id: {{DATA_PARTITION}}
+
+###
+# @name purgeRecord
+DELETE {{STORAGE_HOST}}/records/{{id}}
+Authorization: Bearer {{access_token}}
+Accept: application/json
+data-partition-id: {{DATA_PARTITION}}

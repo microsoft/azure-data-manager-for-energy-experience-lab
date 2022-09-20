@@ -1,0 +1,43 @@
+<!-- Copyright (c) Microsoft Corporation.
+     Licensed under the MIT License. -->
+
+<mat-divider></mat-divider>
+<div class="row-overview-container">
+  <h2>{{this.dataGroup.name}} - Members ({{this.dataGroup.members.length}})</h2>
+  <div class="button-container">
+    <button
+      cdkOverlayOrigin
+      #createUserOverlayTrigger="cdkOverlayOrigin"
+      mat-raised-button
+      color="accent"
+      class="row-button"
+      (click)="this.toggleGroupAssignment(eGroupAssignmentAction.Addition)">
+      <mat-icon class="add-button-icon">person_add</mat-icon>
+      Add User</button>
+    <button
+      cdkOverlayOrigin
+      #createUserOverlayTrigger="cdkOverlayOrigin"
+      mat-raised-button
+      color="warn"
+      class="row-button"
+      [disabled]="!groups.selectedOptions.selected.length"
+      (click)="this.removeSelectedUsers()">
+      <mat-icon class="add-button-icon">close</mat-icon>
+      Remove User</button>
+  </div>
+</div>
+<mat-selection-list #groups>
+  <mat-list-option *ngFor="let member of this.dataGroup.members" [value]="member.email">{{member.email}}</mat-list-option>
+</mat-selection-list>
+<ng-template
+  cdkConnectedOverlay
+  [cdkConnectedOverlayOrigin]="createUserOverlayTrigger"
+  [cdkConnectedOverlayScrollStrategy]=""
+  [cdkConnectedOverlayOpen]="this.showGroupAssignment">
+  <app-group-assignment
+    class="overlay-container mat-elevation-z8"
+    [group]="this.dataGroup"
+    [groupAssignmentAction]="this.groupAssignmentAction"
+    (closedGroupAssignment)="this.closeGroupAssignment()"
+    (groupAssignmentCompleted)="this.refreshGroupData()"></app-group-assignment>
+</ng-template>

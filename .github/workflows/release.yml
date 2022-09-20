@@ -1,0 +1,50 @@
+name: Release
+
+on:
+  release:
+    types: [created]
+
+jobs:
+  validate:
+    name: Validation
+    uses: ./.github/workflows/validate.yml
+  create_assets_for_release:
+    name: Create Assets for Release
+    needs: validate
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Tokenize portal version
+        uses: cschleiden/replace-tokens@v1
+        with:
+          files: '["**/control-plane/experiencelab.sh"]'
+        env:
+          Build.BuildNumber: ${{ github.ref_name }}
+
+      - name: Compress portal
+        run: tar -czvf developer-portal.tar.gz developer-portal
+
+      - name: Compress REST scripts
+        run: zip -r rest-scripts.zip rest-scripts
+
+      - name: Bicep build ARM template
+        uses: Azure/bicep-build-action@v1.0.0
+        with:
+          bicepFilePath: ./control-plane/main.bicep
+          outputFilePath: ./azuredeploy.json
+
+      - name: Upload artifacts to release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ github.ref_name }}
+          files: |
+            developer-portal.tar.gz
+            rest-scripts.zip
+            azuredeploy.json
+            data-load/open-test-data/downloadTnoData.sh
+            data-load/open-test-data/template.json
+            control-plane/Dockerfile
+            control-plane/containerRun.sh
+            control-plane/experiencelab.sh

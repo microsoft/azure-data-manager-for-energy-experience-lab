@@ -1,0 +1,42 @@
+/* Copyright (c) Microsoft Corporation.
+Licensed under the MIT License. */
+
+.form-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.submit-and-status-container {
+    display: flex;
+    flex-direction: row;
+    height: 36px;
+}
+
+.submit-button {
+    width: 117px;
+}
+
+.status-container {
+    position: relative;
+    margin-top: 9px;
+    margin-left: 10px;
+}
+
+.error-message {
+    color: #f44336;
+}
+
+.edit-container {
+    background-color: white;
+    padding: 10px;
+}
+
+.close-button,
+.close-button-icon {
+    width: 24px;
+    height: 24px;
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+

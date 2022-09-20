@@ -1,0 +1,79 @@
+/* Copyright (c) Microsoft Corporation.
+Licensed under the MIT License. */
+
+.user-overview-container {
+  text-align: right;
+  display: grid;
+}
+
+.toolbar-spacer {
+  flex: 1 1 auto;
+}
+
+.display-name {
+  max-height: 20px;
+  font-size: 18px;
+}
+
+.email {
+  font-size: 15px;
+}
+
+.menu-option-label {
+  margin-left: 4px;
+}
+
+.toolbar {
+  background: #0078D4;
+  color: white;
+  max-height: 48px;
+}
+
+
+.menu-navigation {
+  margin: 16px;
+  width: 250px;
+  border-right: none;
+  background: #0078D4;
+  color: white;
+  padding: 16px;
+  text-align: center;
+}
+
+.content {
+  margin: 16px;
+  margin-left: 32px;
+  word-break: break-word;
+  padding-left: 12px;
+  padding-right: 12px;
+  padding-top: 1px;
+  padding-bottom: 1px;
+}
+
+.menu-navigation-container {
+  height: calc(100vh - 50px);
+}
+
+.menu-button {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  font-size: 1rem;
+}
+
+.divider {
+  margin-top: 16px;
+  margin-bottom: 16px;
+  background-color: ghostwhite;
+}
+
+.version-container {
+  position: absolute;
+  display: grid;
+  bottom: 0;
+  left: 0;
+  margin-left: 65px;
+  font-size: 13px;
+  margin-bottom: 10px;
+}

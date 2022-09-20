@@ -1,0 +1,42 @@
+<!-- Copyright (c) Microsoft Corporation.
+     Licensed under the MIT License. -->
+
+<div id="overview">
+    <h1>Power BI Visualization</h1>
+    <p>
+        Included in Experience Lab is a pre-configured Power BI connector for visualizing TNO data.
+        The connector is open source, and can be found on <a href="https://github.com/KadriUmay/OSDUPowerConnectors" target="_blank" rel="noopener noreferrer">Kadri Umay's GitHub</a>.
+        Currently, the Power BI connector only supports client-side Power BI reports - it does not support reports published to Power BI Online.
+    </p>
+</div>
+<div id="prerequisites">
+    <h2>Prerequisites</h2>
+    <ul>
+        <li>You must be using a Windows PC</li>
+        <li>You have ingested Open Test Data (TNO) into your Microsoft Energy Data Services instance</li>
+    </ul>
+</div>
+<div id="instructions">
+    <h2>Instructions</h2>
+    <p>The following steps explain how to use Power BI with Microsoft Energy Data Services.</p>
+    <ol>
+        <li>Download and install <a href="https://powerbi.microsoft.com/en-us/desktop/" target="_blank" rel="noopener noreferrer">Power BI Desktop</a></li>
+        <li>Enable unsigned connectors</li>
+            <ol>
+                <li>Open Power BI Desktop</li>
+                <li>Navigate to File > Options and Settings > Options > Security</li>
+                <li>Under "Data Extensions", select "Allow any extension to load without validation or warning"
+                    <a href="https://docs.microsoft.com/en-us/power-bi/connect-data/desktop-connector-extensibility#custom-connectors" target="_blank" rel="noopener noreferrer">
+                        (Read more about custom connectors)
+                    </a></li>
+                <li>Click OK</li>
+            </ol>
+        <li>Download <a href="/assets/{{this.powerBiConnectorFileName}}">Power BI Connector</a>,
+            and save it to C:\Users\&lt;profile&gt;\Documents\Power BI Desktop\Custom Connectors. Create this folder if it doesn't exist.</li>
+        <li>Download the <a href="https://github.com/KadriUmay/OSDUPowerConnectors/raw/master/Power%20BI%20Sample%20Dashboard/Wells%20Depth%20Report%20Template%20Using%20Connector.pbit" target="_blank" rel="noopener noreferrer">sample Power BI Template Report</a> from GitHub</li>
+        <li>Open the report in Power BI Desktop</li>
+    </ol>
+</div>
+
+
+

@@ -1,0 +1,42 @@
+<!-- Copyright (c) Microsoft Corporation.
+     Licensed under the MIT License. -->
+
+<div class="overlay-container">
+  <form [formGroup]="this.groupAssignmentForm" (ngSubmit)="enactGroupAssignment()">
+      <div class="form-container">
+        <div class="header">
+          <span>Group: {{this.group.name}}</span>
+        </div>
+        <mat-form-field [floatLabel]="'auto'">
+          <mat-label>User Object ID</mat-label>
+          <input matInput formControlName="objectId">
+          <mat-icon matSuffix>person_outline</mat-icon>
+          <mat-hint>Found in the Azure AD Portal</mat-hint>
+        </mat-form-field>
+          <button class="close-button" mat-icon-button aria-label="close dialog" type="button" mat-dialog-close (click)="this.closeGroupAssignment()">
+              <mat-icon class="close-button-icon">close</mat-icon>
+          </button>
+          <div class="submit-and-status-container">
+              <button
+                color="primary"
+                class="add-button"
+                mat-raised-button
+                type="submit"
+                *ngIf="this.isGroupAddition"
+                [disabled]="!this.groupAssignmentForm.valid">Add User</button>
+              <button
+                color="warn"
+                class="remove-button"
+                mat-raised-button
+                type="submit"
+                *ngIf="this.isGroupRemoval"
+                [disabled]="!this.groupAssignmentForm.valid">Remove User</button>
+              <div class="status-container">
+                  <span *ngIf="this.groupAssignmentStatus === eProcessStatus.Succeeded">{{this.groupAssignmentResultMessage}}</span>
+                  <span *ngIf="this.groupAssignmentStatus === eProcessStatus.Failed" class="error-message">{{this.groupAssignmentResultMessage}}</span>
+              </div>
+              <mat-progress-spinner mode="indeterminate" diameter="36" *ngIf="this.groupAssignmentStatus === eProcessStatus.InProgress"></mat-progress-spinner>
+          </div>
+      </div>
+  </form>
+</div>

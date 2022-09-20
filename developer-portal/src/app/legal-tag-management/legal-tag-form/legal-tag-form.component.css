@@ -1,0 +1,14 @@
+/* Copyright (c) Microsoft Corporation.
+Licensed under the MIT License. */
+
+.form-container {
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 25px;
+  padding-left: 10px;
+}
+
+.properties-container {
+  display: flex;
+  flex-direction: column;
+}

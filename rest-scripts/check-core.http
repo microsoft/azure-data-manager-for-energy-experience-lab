@@ -1,0 +1,204 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
+# ------- HTTP REST CLIENT -------
+# https://marketplace.visualstudio.com/items?itemName=humao.rest-client
+# 
+# Purpose: Scenario Validation - Storage Record
+
+# -----------------------
+# OAUTH (Variables)
+# -----------------------
+###
+@login_base = login.microsoftonline.com/{{TENANT_ID}}
+@oauth_token_host = {{login_base}}/oauth2/v2.0/token
+@scopes = {{CLIENT_ID}}/.default openid profile offline_access
+
+
+# -----------------------
+# OAUTH  refresh_token
+# -----------------------
+###
+# @name refresh
+POST https://{{oauth_token_host}} HTTP/1.1
+Content-Type: application/x-www-form-urlencoded
+Origin: {{DEVELOPER_PORTAL}}
+
+grant_type=refresh_token
+&client_id={{CLIENT_ID}}
+&refresh_token={{REFRESH_TOKEN}}
+&scope={{scopes}}
+
+
+# -----------------------
+# API (Variables)
+# -----------------------
+###
+@access_token = {{refresh.response.body.access_token}}
+@ENDPOINT = https://{{HOST}}
+@ENTITLEMENTS_HOST = {{ENDPOINT}}/api/entitlements/v2
+@LEGAL_HOST = {{ENDPOINT}}/api/legal/v1
+@SCHEMA_HOST = {{ENDPOINT}}/api/schema-service/v1
+@STORAGE_HOST = {{ENDPOINT}}/api/storage/v2
+@SEARCH_HOST = {{ENDPOINT}}/api/search/v2
+@tag =  public-usa-check-1
+@kind = osdu:wks:reference-data--ProcessingParameterType:1.0.0
+@index = osdu-wks-reference-data--processingparametertype-1.0.0
+
+
+# -----------------------
+# API: legal
+# -----------------------
+###
+# @name createTag
+POST {{LEGAL_HOST}}/legaltags
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+data-partition-id: {{DATA_PARTITION}}
+
+{
+  "name": "{{tag}}",
+  "description": "This tag is used by Check Scripts",
+  "properties": {
+    "countryOfOrigin": [
+      "US"
+    ],
+    "contractId": "A1234",
+    "expirationDate": "2022-12-31",
+    "originator": "MyCompany",
+    "dataType": "Transferred Data",
+    "securityClassification": "Public",
+    "personalData": "No Personal Data",
+    "exportClassification": "EAR99"
+  }
+}
+
+
+###
+# @name getTag
+GET {{LEGAL_HOST}}/legaltags/{{DATA_PARTITION}}-{{tag}}
+Authorization: Bearer {{access_token}}
+Accept: application/json
+data-partition-id: {{DATA_PARTITION}}
+
+
+# -----------------------
+# API: schema
+# -----------------------
+###
+# @name getSchema
+GET {{SCHEMA_HOST}}/schema/{{kind}}
+Authorization: Bearer {{access_token}}
+Accept: application/json
+data-partition-id: {{DATA_PARTITION}}
+
+
+# -----------------------
+# API STORAGE
+# -----------------------
+###
+# @name createRecord
+PUT {{STORAGE_HOST}}/records
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+data-partition-id: {{DATA_PARTITION}}
+
+[
+  {
+    "kind": "{{kind}}",
+    "acl": {
+      "viewers": [
+        "data.default.viewers@{{DATA_PARTITION}}.dataservices.energy"
+      ],
+      "owners": [
+        "data.default.owners@{{DATA_PARTITION}}.dataservices.energy"
+      ]
+    },
+    "legal": {
+      "legaltags": [
+        "{{DATA_PARTITION}}-{{tag}}"
+      ],
+      "otherRelevantDataCountries": [
+        "US"
+      ],
+      "status": "compliant"
+    },
+    "data": {
+      "Name": "QA Test Case",
+      "ID": "qatest",
+      "Code": "QA Test Case",
+      "Source": "osdu-tno-load-js"
+    }
+  }
+]
+
+@id = {{createRecord.response.body.recordIds[0]}}
+@version = {{createRecord.response.body.recordIdVersions[0]}}
+
+
+###
+# @name GetRecord
+GET {{STORAGE_HOST}}/records/{{id}}
+Authorization: Bearer {{access_token}}
+Accept: application/json
+data-partition-id: {{DATA_PARTITION}}
+
+
+###
+# @name ListRecordVersions
+GET {{STORAGE_HOST}}/records/versions/{{id}}
+Authorization: Bearer {{access_token}}
+Accept: application/json
+data-partition-id: {{DATA_PARTITION}}
+
+@version = {{ListRecordVersions.response.body.versions[0]}}
+
+
+###
+# @name GetRecordVersion
+GET {{STORAGE_HOST}}/records/{{id}}/{{version}}
+Authorization: Bearer {{access_token}}
+Accept: application/json
+data-partition-id: {{DATA_PARTITION}}
+
+@dataID = {{GetRecordVersion.response.body.data.ID}}
+
+
+# -----------------------
+# API search
+# -----------------------
+###
+# @name searchRecord
+POST {{SEARCH_HOST}}/query
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+data-partition-id: {{DATA_PARTITION}}
+
+{
+  "kind": "{{kind}}",
+  "query": "data.ID:(\"{{dataID}}\")",
+  "offset": 0,
+  "limit": 1
+}
+
+@all_totalCount = {{searchRecord.response.body.totalCount}}
+@record_id = {{searchRecord.response.body.results[0].id}}
+
+
+# -----------------------
+# CLEANUP
+# -----------------------
+###
+# @name deleteRecord
+DELETE {{STORAGE_HOST}}/records/{{id}}
+Authorization: Bearer {{access_token}}
+Accept: application/json
+data-partition-id: {{DATA_PARTITION}}
+
+
+###
+# @name deleteTag
+DELETE {{LEGAL_HOST}}/legaltags/{{DATA_PARTITION}}-{{tag}}
+Authorization: Bearer {{access_token}}
+Accept: application/json
+data-partition-id: {{DATA_PARTITION}}

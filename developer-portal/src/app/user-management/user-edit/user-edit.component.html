@@ -1,0 +1,25 @@
+<!-- Copyright (c) Microsoft Corporation.
+     Licensed under the MIT License. -->
+
+<div class="edit-container">
+    <form [formGroup]="this.editUserForm" (ngSubmit)="editUser()">
+        <div class="form-container">
+            <mat-form-field>
+                <mat-select placeholder="Group" formControlName="group">
+                    <mat-option *ngFor="let group of this.groups" value="{{group.value}}">{{group.displayValue}}</mat-option>
+                </mat-select>
+            </mat-form-field>
+            <button class="close-button" mat-icon-button aria-label="close dialog" type="button" mat-dialog-close (click)="this.closeEditUser()">
+                <mat-icon class="close-button-icon">close</mat-icon>
+            </button>
+            <div class="submit-and-status-container">
+                <button color="primary" class="submit-button" mat-raised-button type="submit" [disabled]="!this.editUserForm.valid">Update</button>
+                <div class="status-container">
+                    <span *ngIf="this.editStatus === eUserEditStatus.Succeeded">{{this.editUserResultMessage}}</span>
+                    <span *ngIf="this.editStatus === eUserEditStatus.Failed" class="error-message">{{this.editUserResultMessage}}</span>
+                </div>
+                <mat-progress-spinner mode="indeterminate" diameter="36" *ngIf="this.editStatus === eUserEditStatus.InProgress"></mat-progress-spinner>
+            </div>
+        </div>
+    </form>
+</div>

@@ -1,0 +1,31 @@
+<!-- Copyright (c) Microsoft Corporation.
+     Licensed under the MIT License. -->
+
+<div class="creation-container">
+    <form [formGroup]="this.creationForm" (ngSubmit)="createUser()">
+        <div class="form-container">
+            <button class="close-button" mat-icon-button aria-label="close dialog" type="button" mat-dialog-close (click)="this.closeCreateUser()">
+                <mat-icon class="close-button-icon" (click)="this.closeCreateUser()">close</mat-icon>
+            </button>
+            <mat-form-field [floatLabel]="'auto'">
+                <mat-label>User Object ID</mat-label>
+                <input matInput formControlName="objectId">
+                <mat-icon matSuffix>person_outline</mat-icon>
+                <mat-hint>Found in the Azure AD Portal</mat-hint>
+            </mat-form-field>
+            <mat-form-field class="group-entry">
+                <mat-select placeholder="Group" formControlName="group">
+                    <mat-option *ngFor="let group of this.groups" value="{{group.value}}">{{group.displayValue}}</mat-option>
+                </mat-select>
+            </mat-form-field>
+            <div class="submit-and-status-container">
+                <button color="primary" class="submit-button" mat-raised-button type="submit" [disabled]="!this.creationForm.valid">Create</button>
+                <div class="status-container">
+                    <span *ngIf="this.creationStatus === eUserCreationStatus.Succeeded">{{this.creationResultMessage}}</span>
+                    <span *ngIf="this.creationStatus === eUserCreationStatus.Failed" class="error-message">{{this.creationResultMessage}}</span>
+                </div>
+                <mat-progress-spinner mode="indeterminate" diameter="36" *ngIf="this.creationStatus === eUserCreationStatus.InProgress"></mat-progress-spinner>
+            </div>
+        </div>
+    </form>
+</div>

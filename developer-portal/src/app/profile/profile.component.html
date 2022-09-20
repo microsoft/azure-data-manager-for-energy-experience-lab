@@ -1,0 +1,66 @@
+<!-- Copyright (c) Microsoft Corporation.
+     Licensed under the MIT License. -->
+
+<div>
+    <p class="spacing"><strong>Name: </strong> {{this.profile?.name}}</p>
+    <p class="spacing"><strong>Email: </strong> {{this.profile?.email}}</p>
+    <p class="spacing"><strong>Id: </strong> {{this.profile?.id}}</p>
+    <div class="spacing">
+        <span><strong>Access Token</strong></span>
+        <button mat-icon-button
+            #accessTokenToolTip="matTooltip"
+            [matTooltip]="this.defaultTextForCopyButton"
+            matTooltipPosition="above"
+            (mouseenter)="this.resetCopySecretToolTipMessage()"
+            (click)="this.copyAccessToken()">
+                <mat-icon aria-label="copy access token">content_copy</mat-icon>
+        </button>
+        <button mat-button color="primary" (click)="this.toggleAccessToken()">{{ this.accessTokenToggleLabel }}</button>
+        <p *ngIf="this.showAccessToken" class="token">{{this.tokens?.access}}</p>
+    </div>
+    <div class="spacing">
+        <span><strong>Refresh Token</strong></span>
+        <button mat-icon-button
+            #refreshTokenToolTip="matTooltip"
+            [matTooltip]="this.defaultTextForCopyButton"
+            matTooltipPosition="above"
+            (mouseenter)="this.resetCopySecretToolTipMessage()"
+            (click)="this.copyRefreshToken()">
+                <mat-icon aria-label="copy refresh token">content_copy</mat-icon>
+        </button>
+        <button mat-button color="primary" (click)="this.toggleRefreshToken()">{{ this.refreshTokenToggleLabel }}</button>
+        <p *ngIf="this.showRefreshToken" class="token">{{this.tokens?.refresh}}</p>
+    </div>
+    <p><strong>Assigned Groups</strong></p>
+    <div>
+    <mat-form-field class="filter-field">
+        <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter" #input>
+    </mat-form-field>
+    <div class="container mat-elevation-z8">
+        <div class="loading-shade" *ngIf="this.isLoadingGroups || this.failedToLoadGroups">
+            <mat-progress-spinner mode="indeterminate" diameter="50" *ngIf="this.isLoadingGroups"></mat-progress-spinner>
+            <div class="user-groups-error-message" *ngIf="this.failedToLoadGroups">
+                Unable to get user's groups
+            </div>
+        </div>
+        <div class="table-container">
+            <table mat-table matSort [dataSource]="this.groupsDataSource" class="mat-elevation-z8"
+                matSortActive="name" matSortDirection="desc">
+                <ng-container matColumnDef="name">
+                    <th mat-header-cell mat-sort-header *matHeaderCellDef> Group </th>
+                    <td mat-cell *matCellDef="let group"> {{group.name}} </td>
+                </ng-container>
+                <ng-container matColumnDef="description">
+                    <th mat-header-cell mat-sort-header *matHeaderCellDef> Description </th>
+                    <td mat-cell *matCellDef="let group"> {{group.description}} </td>
+                </ng-container>
+                <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                <tr class="mat-row" *matNoDataRow >
+                    <td class="mat-cell" colspan="2" *ngIf="!this.isLoadingGroups || this.failedToLoadGroups">No data matching the filter "{{input.value}}"</td>
+                </tr>
+            </table>
+        </div>
+        <mat-paginator [pageSize]="25" [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Select page of user groups"></mat-paginator>
+    </div>
+</div>

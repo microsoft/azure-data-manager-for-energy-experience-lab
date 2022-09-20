@@ -1,0 +1,38 @@
+/* Copyright (c) Microsoft Corporation.
+Licensed under the MIT License. */
+
+.row-container {
+    display: flex;
+    justify-content: space-between;
+    line-height: 4em;
+}
+
+.id-container,
+.button-container {
+    display: inline-block;
+}
+
+.id-container {
+    margin-left: 6px;
+    margin-right: 6px;
+}
+
+.button-container {
+    margin-right: 6px;
+}
+
+.edit-button {
+    margin-right: 8px;
+}
+
+.edit-user-overlay-container {
+    min-width: 256px;
+}
+
+.delete-user-overlay-container {
+    min-width: 350px;
+}
+
+.delete-button-icon {
+    margin: 0 6px 0 -6px;
+}

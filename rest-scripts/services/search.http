@@ -1,0 +1,90 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
+# -------HTTP REST CLIENT -------
+# https://marketplace.visualstudio.com/items?itemName=humao.rest-client
+
+## This script provides a few samples for calling search.
+
+
+# -----------------------
+# OAUTH (Variables)
+# -----------------------
+###
+@login_base = login.microsoftonline.com/{{TENANT_ID}}
+@oauth_token_host = {{login_base}}/oauth2/v2.0/token
+@scopes = {{CLIENT_ID}}/.default openid profile offline_access
+
+
+# -----------------------
+# OAUTH  refresh_token
+# -----------------------
+###
+# @name refresh
+POST https://{{oauth_token_host}} HTTP/1.1
+Content-Type: application/x-www-form-urlencoded
+Origin: {{DEVELOPER_PORTAL}}
+
+grant_type=refresh_token
+&client_id={{CLIENT_ID}}
+&refresh_token={{REFRESH_TOKEN}}
+&scope={{scopes}}
+
+
+# -----------------------
+# API (Variables)
+# -----------------------
+###
+@access_token = {{refresh.response.body.access_token}}
+@ENDPOINT = https://{{HOST}}
+@SEARCH_HOST = {{ENDPOINT}}/api/search/v2/query
+
+
+###
+# @name fulltext_search
+POST {{SEARCH_HOST}}
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+data-partition-id: {{DATA_PARTITION}}
+
+{
+   "kind": "osdu:wks:*:1.0.0",
+   "query": "BIR*"
+}
+
+###
+# @name fulltext_search_wildcard
+POST {{SEARCH_HOST}}
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+data-partition-id: {{DATA_PARTITION}}
+
+{
+    "kind": "osdu:wks:*:1.0.0",
+    "query": "(BIR AND 0?)"
+}
+
+###
+# @name fulltext_search
+POST {{SEARCH_HOST}}
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+data-partition-id: {{DATA_PARTITION}}
+
+{
+   "kind": "osdu:wks:*:1.0.0",
+   "query": "BIR*"
+}
+
+###
+# @name fulltext_search_wildcard
+POST {{SEARCH_HOST}}
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+data-partition-id: {{DATA_PARTITION}}
+
+{
+    "kind": "osdu:wks:*:1.0.0",
+    "query": "BIR 0?"
+}
+

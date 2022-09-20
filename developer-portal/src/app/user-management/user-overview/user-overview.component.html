@@ -1,0 +1,27 @@
+<!-- Copyright (c) Microsoft Corporation.
+     Licensed under the MIT License. -->
+
+<h1>Manage Users ({{this.userProfiles.length}})</h1>
+<div class="overview-container">
+  <div class="button-container">
+    <button cdkOverlayOrigin #createUserOverlayTrigger="cdkOverlayOrigin" mat-raised-button color="accent" class="create-button" (click)="this.toggleCreateUser()"><mat-icon class="create-button-icon">person_add</mat-icon>Create User</button>
+  </div>
+  <mat-progress-spinner class="spinner" mode="indeterminate" diameter="50" *ngIf="this.isLoadingUsers()"></mat-progress-spinner>
+  <span *ngIf="this.failedToLoadUsers" class="error-message">Unable to load users</span>
+  <app-user-overview-row *ngFor="let userProfile of this.userProfiles"
+    [userProfile]="userProfile" (deletedUser)="this.removeUserFromView($event)"></app-user-overview-row>
+</div>
+<ng-template
+  cdkConnectedOverlay
+  [cdkConnectedOverlayOrigin]="createUserOverlayTrigger"
+  [cdkConnectedOverlayScrollStrategy]=""
+  [cdkConnectedOverlayOpen]="this.showCreateUser">
+  <app-user-creation class="overlay-container mat-elevation-z8" (closedCreateUser)="this.closeCreateUser()" (createdUser)="this.addUserToView($event)"></app-user-creation>
+</ng-template>
+
+<h1>Manage Data Groups/ACLs ({{this.dataGroups.length}})</h1>
+<div class="overview-container">
+  <mat-progress-spinner class="spinner" mode="indeterminate" diameter="50" *ngIf="this.isLoadingDataGroups()"></mat-progress-spinner>
+  <span *ngIf="this.failedToLoadDataGroups" class="error-message">Unable to load data groups</span>
+  <app-group-overview-row *ngFor="let dataGroup of this.dataGroups" [dataGroup]="dataGroup"></app-group-overview-row>
+</div>

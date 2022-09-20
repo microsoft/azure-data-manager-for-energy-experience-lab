@@ -1,0 +1,6 @@
+.env
+.envrc
+__pycache__
+build
+dist
+datasets

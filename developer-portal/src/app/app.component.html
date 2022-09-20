@@ -1,0 +1,73 @@
+<!-- Copyright (c) Microsoft Corporation.
+     Licensed under the MIT License. -->
+
+<mat-toolbar class="toolbar">
+  <button mat-icon-button *ngIf="sidenav.mode === 'over'" (click)="sidenav.toggle()">
+    <mat-icon *ngIf="!sidenav.opened">
+      menu
+    </mat-icon>
+    <mat-icon *ngIf="sidenav.opened">
+      close
+    </mat-icon>
+  </button>
+  <span>Microsoft Experience Lab</span>
+  <div class="toolbar-spacer"></div>
+  <div class="user-overview-container">
+    <span class="display-name">{{this.profile?.name}}</span>
+    <span class="email">{{this.profile?.email}}</span>
+  </div>
+</mat-toolbar>
+
+<mat-sidenav-container class="menu-navigation-container">
+  <mat-sidenav #sidenav="matSidenav" class="mat-elevation-z8 menu-navigation">
+    <div *ngIf="this.isUserAuthorized">
+      <a mat-button class="menu-button" [routerLink]="['']">
+        <mat-icon>home</mat-icon>
+        <span class="menu-option-label">Home</span>
+      </a>
+      <a mat-button class="menu-button" [routerLink]="['profile']">
+        <mat-icon>person</mat-icon>
+        <span class="menu-option-label">User Profile</span>
+      </a>
+      <a mat-button class="menu-button" [routerLink]="['powerbi']">
+        <mat-icon>insights</mat-icon>
+        <span class="menu-option-label">Power BI</span>
+      </a>
+      <a mat-button class="menu-button" [routerLink]="['swagger']">
+        <mat-icon>library_books</mat-icon>
+        <span class="menu-option-label">API Swagger</span>
+      </a>
+      <a mat-button class="menu-button" [routerLink]="['rest']">
+        <mat-icon>import_export</mat-icon>
+        <span class="menu-option-label">REST Scripts</span>
+      </a>
+      <a mat-button class="menu-button" [routerLink]="['dataload']">
+        <mat-icon>cloud_upload</mat-icon>
+        <span class="menu-option-label">Data Load</span>
+      </a>
+      <mat-divider class="divider"></mat-divider>
+      <a mat-button class="menu-button" [routerLink]="['users']">
+        <mat-icon>people</mat-icon>
+        <span class="menu-option-label">User Management</span>
+      </a>
+      <a mat-button class="menu-button" [routerLink]="['legal']">
+        <mat-icon>description</mat-icon>
+        <span class="menu-option-label">Legal Tag Management</span>
+      </a>
+      <mat-divider class="divider"></mat-divider>
+    </div>
+    <button mat-button class="menu-button" (click)="logout()">
+      <mat-icon>exit_to_app</mat-icon>
+      <span class="menu-option-label">Sign out</span>
+    </button>
+    <div class="version-container">
+      <span>Version: {{ this.osduVersion }}</span>
+      <span>{{ this.getBuildNumber() }}</span>
+    </div>
+  </mat-sidenav>
+  <mat-sidenav-content>
+    <div class="content mat-elevation-z8">
+      <router-outlet></router-outlet>
+    </div>
+  </mat-sidenav-content>
+</mat-sidenav-container>

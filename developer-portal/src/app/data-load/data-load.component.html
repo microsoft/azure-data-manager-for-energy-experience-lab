@@ -1,0 +1,24 @@
+<!-- Copyright (c) Microsoft Corporation.
+     Licensed under the MIT License. -->
+
+<h1>TNO Data Load</h1>
+<p>
+  Test features in Microsoft Energy Data Services after loading the TNO data set.
+</p>
+<p>
+  <strong>Note:</strong> Manifests are automatically assigned a data.tno.viewers and data.tno.owners Access Control List (ACL).
+    The first user created during Experience Lab's deployment will be assigned these ACLs.
+    Additional users will need to be a member of these ACLs to query and manipulate TNO data.
+    Users can be added to these ACLs from the <a [routerLink]="['/users']">User Management</a> page.
+</p>
+
+<div id="getting-started">
+  <h2>Overview</h2>
+  <ol>
+    <li>Go to the <a href={{this.tnoTemplateSpecUrl}} target="_blank" rel="noopener noreferrer">open-test-data Template Spec</a> in your Experience Lab Resource Group</li>
+    <li>Click Deploy</li>
+    <li>Click Review + Create and start the deployment</li>
+    <li>The data load will run from a container instance in the same resource group. You can monitor progress in its logs.</li>
+    <li>Wait approx. 1 hour for data load to complete.</li>
+  </ol>
+</div>
