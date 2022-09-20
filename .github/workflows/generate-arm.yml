@@ -1,0 +1,24 @@
+name: Generate ARM Template
+
+on:
+  pull_request:
+    branches: [ "main" ]
+    paths:
+      - '**.bicep'
+
+jobs:
+  generateArmTemplate:
+    name: Generate ARM Template
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Bicep build ARM template
+        uses: Azure/bicep-build-action@v1.0.0
+        with:
+          bicepFilePath: ./control-plane/main.bicep
+          outputFilePath: azuredeploy.json
+      - name: Commit Generated ARM Template
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: Commit generated ARM template

@@ -33,7 +33,7 @@ Experience Lab is only recommended for non-production use cases. It is open sour
 
 ### Create Control Plane Via ARM Template
 
-[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fgithub.com%2FAzure%2Fenergy-data-services-experience-lab%2Freleases%2Flatest%2Fdownload%2Fazuredeploy.json)
+[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmicrosoft%2Fenergy-data-services-experience-lab%2Fmain%2Fazuredeploy.json)
 
 ## Contributing
 
