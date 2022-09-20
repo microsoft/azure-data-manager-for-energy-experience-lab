@@ -1,0 +1,642 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "_generator": {
+      "name": "bicep",
+      "version": "0.10.61.36676",
+      "templateHash": "1648844848847632394"
+    }
+  },
+  "parameters": {
+    "resourceGroupPrefix": {
+      "type": "string",
+      "defaultValue": "EnergyDataServices",
+      "metadata": {
+        "description": "Resource Group Prefix"
+      }
+    },
+    "resourceGroupLocation": {
+      "type": "string",
+      "defaultValue": "eastus",
+      "metadata": {
+        "description": "Resource Group Location"
+      }
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Resources/resourceGroups",
+      "apiVersion": "2021-01-01",
+      "name": "[format('experiencelab-controlplane-{0}', parameters('resourceGroupPrefix'))]",
+      "location": "[parameters('resourceGroupLocation')]"
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2020-10-01",
+      "name": "labStorage",
+      "resourceGroup": "[format('experiencelab-controlplane-{0}', parameters('resourceGroupPrefix'))]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "location": {
+            "value": "[parameters('resourceGroupLocation')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.10.61.36676",
+              "templateHash": "11261844440146180589"
+            }
+          },
+          "parameters": {
+            "location": {
+              "type": "string",
+              "defaultValue": "[resourceGroup().location]",
+              "metadata": {
+                "description": "Azure region where resources should be deployed"
+              }
+            },
+            "storageAccountName": {
+              "type": "string",
+              "defaultValue": "[uniqueString(resourceGroup().id, deployment().name)]",
+              "metadata": {
+                "description": "Desired name of the storage account"
+              }
+            },
+            "containerName": {
+              "type": "string",
+              "defaultValue": "files",
+              "metadata": {
+                "description": "Name of the blob container"
+              }
+            }
+          },
+          "variables": {
+            "azCliVersion": "2.26.1"
+          },
+          "resources": [
+            {
+              "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
+              "apiVersion": "2021-04-01",
+              "name": "[format('{0}/{1}/{2}', parameters('storageAccountName'), 'default', parameters('containerName'))]",
+              "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts/blobServices', parameters('storageAccountName'), 'default')]"
+              ]
+            },
+            {
+              "type": "Microsoft.Storage/storageAccounts/blobServices",
+              "apiVersion": "2021-04-01",
+              "name": "[format('{0}/{1}', parameters('storageAccountName'), 'default')]",
+              "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]"
+              ]
+            },
+            {
+              "type": "Microsoft.Storage/storageAccounts",
+              "apiVersion": "2021-04-01",
+              "name": "[parameters('storageAccountName')]",
+              "location": "[parameters('location')]",
+              "sku": {
+                "name": "Standard_LRS"
+              },
+              "kind": "StorageV2"
+            },
+            {
+              "type": "Microsoft.Resources/deploymentScripts",
+              "apiVersion": "2020-10-01",
+              "name": "[format('load-blob-{0}', deployment().name)]",
+              "location": "[parameters('location')]",
+              "kind": "AzureCLI",
+              "properties": {
+                "azCliVersion": "[variables('azCliVersion')]",
+                "timeout": "PT10M",
+                "retentionInterval": "PT1H",
+                "environmentVariables": [
+                  {
+                    "name": "AZURE_STORAGE_ACCOUNT",
+                    "value": "[parameters('storageAccountName')]"
+                  },
+                  {
+                    "name": "AZURE_STORAGE_KEY",
+                    "secureValue": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName')), '2021-04-01').keys[0].value]"
+                  },
+                  {
+                    "name": "AZURE_STORAGE_CONTAINER",
+                    "value": "[parameters('containerName')]"
+                  }
+                ],
+                "scriptContent": "      #!/bin/bash\r\n      set -e\r\n\r\n      echo \\\"Downloading Container Script: File- experiencelab.sh\\\"\r\n      wget -O experiencelab.sh https://github.com/microsoft/energy-data-services-experience-lab/releases/latest/download/experiencelab.sh\r\n      az storage blob upload -f experiencelab.sh -c $AZURE_STORAGE_CONTAINER -n experiencelab.sh\r\n\r\n      echo \\\"Downloading Container Script: File- template-open-test-data.json\\\"\r\n      wget -O template-open-test-data.json https://github.com/microsoft/energy-data-services-experience-lab/releases/latest/download/template.json\r\n      az storage blob upload -f template-open-test-data.json -c $AZURE_STORAGE_CONTAINER -n template-open-test-data.json\r\n\r\n      echo \\\"Downloading Container Script: File- downloadTnoData.sh\\\"\r\n      wget -O downloadTnoData.sh https://github.com/microsoft/energy-data-services-experience-lab/releases/latest/download/downloadTnoData.sh\r\n      az storage blob upload -f downloadTnoData.sh -c $AZURE_STORAGE_CONTAINER -n downloadTnoData.sh\r\n\r\n      echo \\\"Downloading Container Script: File- developer-portal.tar.gz\\\"\r\n      wget -O developer-portal.tar.gz https://github.com/microsoft/energy-data-services-experience-lab/releases/latest/download/developer-portal.tar.gz\r\n      az storage blob upload -f developer-portal.tar.gz -c $AZURE_STORAGE_CONTAINER -n developer-portal.tar.gz\r\n\r\n      echo \\\"Downloading Container Script: File- rest-scripts.zip\\\"\r\n      wget -O rest-scripts.zip https://github.com/microsoft/energy-data-services-experience-lab/releases/latest/download/rest-scripts.zip\r\n      az storage blob upload -f rest-scripts.zip -c $AZURE_STORAGE_CONTAINER -n rest-scripts.zip\r\n    "
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]"
+              ]
+            }
+          ],
+          "outputs": {
+            "storageAccountId": {
+              "type": "string",
+              "value": "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]"
+            },
+            "storageAccountName": {
+              "type": "string",
+              "value": "[parameters('storageAccountName')]"
+            }
+          }
+        }
+      },
+      "dependsOn": [
+        "[subscriptionResourceId('Microsoft.Resources/resourceGroups', format('experiencelab-controlplane-{0}', parameters('resourceGroupPrefix')))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2020-10-01",
+      "name": "labContainerRegistry",
+      "resourceGroup": "[format('experiencelab-controlplane-{0}', parameters('resourceGroupPrefix'))]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "location": {
+            "value": "[parameters('resourceGroupLocation')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.10.61.36676",
+              "templateHash": "1796470314425809952"
+            }
+          },
+          "parameters": {
+            "acrName": {
+              "type": "string",
+              "defaultValue": "[format('acr{0}', uniqueString(resourceGroup().id, deployment().name))]",
+              "metadata": {
+                "description": "Desired name of the Azure Container Registry"
+              },
+              "maxLength": 50,
+              "minLength": 5
+            },
+            "location": {
+              "type": "string",
+              "defaultValue": "[resourceGroup().location]",
+              "metadata": {
+                "description": "Azure region where resources should be deployed"
+              }
+            },
+            "managedIdentityName": {
+              "type": "string",
+              "defaultValue": "[format('id-{0}', uniqueString(resourceGroup().id, deployment().name))]",
+              "metadata": {
+                "description": "Desired name of the Managed Identity"
+              },
+              "maxLength": 128,
+              "minLength": 3
+            }
+          },
+          "variables": {
+            "containerScriptFileName": "containerRun.sh",
+            "dockerFileName": "Dockerfile",
+            "roleAssignmentName": "[guid(format('{0}contributor', resourceGroup().name))]",
+            "contributorRoleDefinitionId": "[format('/subscriptions/{0}/providers/Microsoft.Authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c', subscription().subscriptionId)]",
+            "containerImageName": "experiencelabinstall:latest"
+          },
+          "resources": [
+            {
+              "type": "Microsoft.ManagedIdentity/userAssignedIdentities",
+              "apiVersion": "2021-09-30-preview",
+              "name": "[parameters('managedIdentityName')]",
+              "location": "[parameters('location')]"
+            },
+            {
+              "type": "Microsoft.ContainerRegistry/registries",
+              "apiVersion": "2021-06-01-preview",
+              "name": "[parameters('acrName')]",
+              "location": "[parameters('location')]",
+              "sku": {
+                "name": "Standard"
+              },
+              "identity": {
+                "type": "UserAssigned",
+                "userAssignedIdentities": {
+                  "[format('{0}', resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', parameters('managedIdentityName')))]": {}
+                }
+              },
+              "properties": {
+                "anonymousPullEnabled": true
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', parameters('managedIdentityName'))]"
+              ]
+            },
+            {
+              "type": "Microsoft.Authorization/roleAssignments",
+              "apiVersion": "2020-10-01-preview",
+              "name": "[variables('roleAssignmentName')]",
+              "properties": {
+                "description": "Managed identity access for the RG",
+                "principalId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', parameters('managedIdentityName'))).principalId]",
+                "roleDefinitionId": "[variables('contributorRoleDefinitionId')]",
+                "principalType": "ServicePrincipal"
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', parameters('managedIdentityName'))]"
+              ]
+            },
+            {
+              "type": "Microsoft.Resources/deploymentScripts",
+              "apiVersion": "2020-10-01",
+              "name": "[format('build-and-push-image-{0}', deployment().name)]",
+              "location": "[parameters('location')]",
+              "kind": "AzureCLI",
+              "identity": {
+                "type": "UserAssigned",
+                "userAssignedIdentities": {
+                  "[format('{0}', resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', parameters('managedIdentityName')))]": {}
+                }
+              },
+              "properties": {
+                "azCliVersion": "2.30.0",
+                "timeout": "PT15M",
+                "retentionInterval": "PT1H",
+                "environmentVariables": [
+                  {
+                    "name": "CONTAINER_IMAGE_NAME",
+                    "value": "[variables('containerImageName')]"
+                  },
+                  {
+                    "name": "CONTAINER_SCRIPT_NAME",
+                    "value": "[variables('containerScriptFileName')]"
+                  },
+                  {
+                    "name": "DOCKERFILE_NAME",
+                    "value": "[variables('dockerFileName')]"
+                  },
+                  {
+                    "name": "REGISTRY_NAME",
+                    "value": "[parameters('acrName')]"
+                  },
+                  {
+                    "name": "INITIAL_DELAY",
+                    "value": "45s"
+                  }
+                ],
+                "scriptContent": "      #!/bin/bash\r\n      set -e\r\n\r\n      echo \\\"Waiting on RBAC replication ${INITIAL_DELAY}\\\"\r\n      sleep ${INITIAL_DELAY}\r\n\r\n      authHeader=\"Authorization: token ${PAT}\"\r\n      echo \\\"Downloading Dockerfile: File- ${DOCKERFILE_NAME}\\\"\r\n      wget -O ${DOCKERFILE_NAME} https://github.com/microsoft/energy-data-services-experience-lab/releases/latest/download/${DOCKERFILE_NAME}\r\n\r\n      echo \\\"Downloading Container Script: File- ${CONTAINER_SCRIPT_NAME}\\\"\r\n      wget -O ${CONTAINER_SCRIPT_NAME} https://github.com/microsoft/energy-data-services-experience-lab/releases/latest/download/${CONTAINER_SCRIPT_NAME}\r\n\r\n      echo \\\"Build and Import Image: ${CONTAINER_IMAGE_NAME} into ACR: ${REGISTRY_NAME}\\\"\r\n      az acr build --image ${CONTAINER_IMAGE_NAME} \\\r\n        --registry ${REGISTRY_NAME} \\\r\n        --file ${DOCKERFILE_NAME} .\r\n    "
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Authorization/roleAssignments', variables('roleAssignmentName'))]",
+                "[resourceId('Microsoft.ContainerRegistry/registries', parameters('acrName'))]",
+                "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', parameters('managedIdentityName'))]"
+              ]
+            }
+          ],
+          "outputs": {
+            "containerImagePath": {
+              "type": "string",
+              "value": "[format('{0}/{1}', reference(resourceId('Microsoft.ContainerRegistry/registries', parameters('acrName'))).loginServer, variables('containerImageName'))]"
+            },
+            "managedIdentityId": {
+              "type": "string",
+              "value": "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', parameters('managedIdentityName'))]"
+            }
+          }
+        }
+      },
+      "dependsOn": [
+        "[subscriptionResourceId('Microsoft.Resources/resourceGroups', format('experiencelab-controlplane-{0}', parameters('resourceGroupPrefix')))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2020-10-01",
+      "name": "dataLoad",
+      "resourceGroup": "[format('experiencelab-controlplane-{0}', parameters('resourceGroupPrefix'))]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "storageAccountId": {
+            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, format('experiencelab-controlplane-{0}', parameters('resourceGroupPrefix'))), 'Microsoft.Resources/deployments', 'labStorage')).outputs.storageAccountId.value]"
+          },
+          "storageAccountName": {
+            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, format('experiencelab-controlplane-{0}', parameters('resourceGroupPrefix'))), 'Microsoft.Resources/deployments', 'labStorage')).outputs.storageAccountName.value]"
+          },
+          "imagePath": {
+            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, format('experiencelab-controlplane-{0}', parameters('resourceGroupPrefix'))), 'Microsoft.Resources/deployments', 'labContainerRegistry')).outputs.containerImagePath.value]"
+          },
+          "location": {
+            "value": "[parameters('resourceGroupLocation')]"
+          },
+          "managedIdentityId": {
+            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, format('experiencelab-controlplane-{0}', parameters('resourceGroupPrefix'))), 'Microsoft.Resources/deployments', 'labContainerRegistry')).outputs.managedIdentityId.value]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.10.61.36676",
+              "templateHash": "12551000327581283349"
+            }
+          },
+          "parameters": {
+            "storageAccountId": {
+              "type": "string",
+              "metadata": {
+                "description": "Storage Account ID"
+              }
+            },
+            "storageAccountName": {
+              "type": "string",
+              "metadata": {
+                "description": "Storage Account name"
+              }
+            },
+            "imagePath": {
+              "type": "string",
+              "metadata": {
+                "description": "Image for data load containers"
+              }
+            },
+            "location": {
+              "type": "string",
+              "defaultValue": "[resourceGroup().location]",
+              "metadata": {
+                "description": "Azure region where resources should be deployed"
+              }
+            },
+            "managedIdentityId": {
+              "type": "string",
+              "metadata": {
+                "description": "Resource ID for managed identity"
+              }
+            }
+          },
+          "variables": {
+            "tnoLoadContainerName": "tnoDataLoad",
+            "cpuCores": 4,
+            "memoryInGb": 16,
+            "accountSasProperties": {
+              "signedServices": "fb",
+              "signedPermission": "rwdlacup",
+              "signedExpiry": "2022-11-30T00:00:00Z",
+              "signedResourceTypes": "co"
+            }
+          },
+          "resources": [
+            {
+              "type": "Microsoft.ContainerInstance/containerGroups",
+              "apiVersion": "2021-09-01",
+              "name": "[variables('tnoLoadContainerName')]",
+              "location": "[parameters('location')]",
+              "identity": {
+                "type": "UserAssigned",
+                "userAssignedIdentities": {
+                  "[format('{0}', parameters('managedIdentityId'))]": {}
+                }
+              },
+              "properties": {
+                "containers": [
+                  {
+                    "name": "load-data",
+                    "properties": {
+                      "image": "[parameters('imagePath')]",
+                      "environmentVariables": [
+                        {
+                          "name": "SETUP_SCRIPT",
+                          "value": "[format('https://{0}.blob.{1}/files/downloadTnoData.sh?{2}', parameters('storageAccountName'), environment().suffixes.storage, listAccountSas(parameters('storageAccountId'), '2018-07-01', variables('accountSasProperties')).accountSasToken)]"
+                        },
+                        {
+                          "name": "CONTROL_PLANE_STORAGE",
+                          "value": "[parameters('storageAccountName')]"
+                        },
+                        {
+                          "name": "STORAGE_ACCOUNT_KEY",
+                          "secureValue": "[listKeys(parameters('storageAccountId'), '2018-07-01').keys[0].value]"
+                        }
+                      ],
+                      "resources": {
+                        "requests": {
+                          "cpu": "[variables('cpuCores')]",
+                          "memoryInGB": "[variables('memoryInGb')]"
+                        }
+                      }
+                    }
+                  }
+                ],
+                "osType": "Linux",
+                "restartPolicy": "Never"
+              }
+            }
+          ]
+        }
+      },
+      "dependsOn": [
+        "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, format('experiencelab-controlplane-{0}', parameters('resourceGroupPrefix'))), 'Microsoft.Resources/deployments', 'labContainerRegistry')]",
+        "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, format('experiencelab-controlplane-{0}', parameters('resourceGroupPrefix'))), 'Microsoft.Resources/deployments', 'labStorage')]",
+        "[subscriptionResourceId('Microsoft.Resources/resourceGroups', format('experiencelab-controlplane-{0}', parameters('resourceGroupPrefix')))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2020-10-01",
+      "name": "labDeploy",
+      "resourceGroup": "[format('experiencelab-controlplane-{0}', parameters('resourceGroupPrefix'))]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "imagePath": {
+            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, format('experiencelab-controlplane-{0}', parameters('resourceGroupPrefix'))), 'Microsoft.Resources/deployments', 'labContainerRegistry')).outputs.containerImagePath.value]"
+          },
+          "location": {
+            "value": "[parameters('resourceGroupLocation')]"
+          },
+          "storageAccountName": {
+            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, format('experiencelab-controlplane-{0}', parameters('resourceGroupPrefix'))), 'Microsoft.Resources/deployments', 'labStorage')).outputs.storageAccountName.value]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.10.61.36676",
+              "templateHash": "12389686067977529474"
+            }
+          },
+          "parameters": {
+            "templateSpecName": {
+              "type": "string",
+              "defaultValue": "CreateLab"
+            },
+            "templateSpecVersionName": {
+              "type": "string",
+              "defaultValue": "0.1"
+            },
+            "location": {
+              "type": "string",
+              "defaultValue": "[resourceGroup().location]"
+            },
+            "imagePath": {
+              "type": "string"
+            },
+            "storageAccountName": {
+              "type": "string"
+            }
+          },
+          "resources": [
+            {
+              "type": "Microsoft.Resources/templateSpecs",
+              "apiVersion": "2021-05-01",
+              "name": "[parameters('templateSpecName')]",
+              "location": "[parameters('location')]",
+              "properties": {
+                "description": "Deploys a Microsoft Energy Data Services instance paired with Experience Lab.",
+                "displayName": "Microsoft Energy Data Services + Experience Lab"
+              }
+            },
+            {
+              "type": "Microsoft.Resources/templateSpecs/versions",
+              "apiVersion": "2021-05-01",
+              "name": "[format('{0}/{1}', parameters('templateSpecName'), parameters('templateSpecVersionName'))]",
+              "location": "[parameters('location')]",
+              "properties": {
+                "mainTemplate": {
+                  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                  "contentVersion": "1.0.0.0",
+                  "parameters": {
+                    "name": {
+                      "type": "string",
+                      "defaultValue": "demo",
+                      "metadata": {
+                        "description": "Experience Lab Name."
+                      }
+                    },
+                    "location": {
+                      "type": "string",
+                      "defaultValue": "[[resourceGroup().location]",
+                      "metadata": {
+                        "description": "Experience Lab Location."
+                      }
+                    },
+                    "defaultUserId": {
+                      "type": "string",
+                      "metadata": {
+                        "description": "Experience Lab First User Object Id."
+                      }
+                    }
+                  },
+                  "variables": {
+                    "storageAccountName": "[parameters('storageAccountName')]",
+                    "accountSasProperties": {
+                      "signedServices": "fb",
+                      "signedPermission": "rwdlacup",
+                      "signedExpiry": "2022-11-30T00:00:00Z",
+                      "signedResourceTypes": "co"
+                    }
+                  },
+                  "resources": [
+                    {
+                      "type": "Microsoft.ContainerInstance/containerGroups",
+                      "apiVersion": "2021-09-01",
+                      "name": "[[concat('experiencelab-', parameters('name'))]",
+                      "location": "[[parameters('location')]",
+                      "properties": {
+                        "containers": [
+                          {
+                            "name": "deploy",
+                            "properties": {
+                              "image": "[parameters('imagePath')]",
+                              "command": [],
+                              "environmentVariables": [
+                                {
+                                  "name": "subId",
+                                  "value": "[[subscription().subscriptionId]"
+                                },
+                                {
+                                  "name": "tenantId",
+                                  "value": "[[subscription().tenantId]"
+                                },
+                                {
+                                  "name": "user",
+                                  "value": "[[parameters('defaultUserId')]"
+                                },
+                                {
+                                  "name": "UNIQUE",
+                                  "value": "[[parameters('name')]"
+                                },
+                                {
+                                  "name": "SETUP_SCRIPT",
+                                  "value": "[[format('https://{0}.blob.{1}/files/experiencelab.sh?{2}', variables('storageAccountName'), environment().suffixes.storage, listAccountSas(resourceId(resourceGroup().name,'Microsoft.Storage/storageAccounts', variables('storageAccountName')), '2018-07-01', variables('accountSasProperties')).accountSasToken)]"
+                                },
+                                {
+                                  "name": "DEPLOYMENT_SUBSCRIPTION",
+                                  "value": "[[subscription().subscriptionId]"
+                                },
+                                {
+                                  "name": "CONTROL_PLANE_GROUP",
+                                  "value": "[[resourceGroup().name]"
+                                },
+                                {
+                                  "name": "CONTROL_PLANE_STORAGE",
+                                  "value": "[[variables('storageAccountName')]"
+                                },
+                                {
+                                  "name": "AZURE_LOCATION",
+                                  "value": "[[parameters('location')]"
+                                }
+                              ],
+                              "ports": [],
+                              "resources": {
+                                "requests": {
+                                  "cpu": 4,
+                                  "memoryInGB": 16
+                                }
+                              }
+                            }
+                          }
+                        ],
+                        "osType": "Linux",
+                        "restartPolicy": "Never"
+                      }
+                    }
+                  ]
+                }
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Resources/templateSpecs', parameters('templateSpecName'))]"
+              ]
+            }
+          ]
+        }
+      },
+      "dependsOn": [
+        "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, format('experiencelab-controlplane-{0}', parameters('resourceGroupPrefix'))), 'Microsoft.Resources/deployments', 'labContainerRegistry')]",
+        "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, format('experiencelab-controlplane-{0}', parameters('resourceGroupPrefix'))), 'Microsoft.Resources/deployments', 'labStorage')]",
+        "[subscriptionResourceId('Microsoft.Resources/resourceGroups', format('experiencelab-controlplane-{0}', parameters('resourceGroupPrefix')))]"
+      ]
+    }
+  ]
+}
