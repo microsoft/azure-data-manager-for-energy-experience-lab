@@ -12,7 +12,7 @@ The control plane contains all the scripts and resources necessary to create ins
 
 ### Via Hosted ARM Template
 
-[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fgithub.com%2FAzure%2Fenergy-data-services-experience-lab%2Freleases%2Flatest%2Fdownload%2Fazuredeploy.json)
+[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fgithub.com%2Fmicrosoft%2Fenergy-data-services-experience-lab%2Freleases%2Flatest%2Fdownload%2Fazuredeploy.json)
 
 Microsoft Energy Data Services is currently only available in the following Azure regions. We recommend you also use one of these for the control plane.
 
