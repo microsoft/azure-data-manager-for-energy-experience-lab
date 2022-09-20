@@ -1,0 +1,24 @@
+/* Copyright (c) Microsoft Corporation.
+Licensed under the MIT License. */
+
+.action-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.error-message {
+  color: #f44336;
+  margin-right: auto;
+  max-width: 350px;
+}
+
+.processing-spinner {
+  margin-left: auto;
+  margin-right: 20px;
+}
+
+.creation-container {
+  max-width: 450px;
+}

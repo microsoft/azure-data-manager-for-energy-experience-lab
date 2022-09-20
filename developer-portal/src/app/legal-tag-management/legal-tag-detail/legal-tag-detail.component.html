@@ -1,0 +1,60 @@
+<!-- Copyright (c) Microsoft Corporation.
+     Licensed under the MIT License. -->
+
+<h1>Legal Tag: {{this.selectedLegalTagName}}</h1>
+<div class="main-container">
+  <div
+    class="loading-container"
+    *ngIf="this.tagLoadingStatus === eProcessStatus.InProgress">
+    <span>Loading...</span>
+    <mat-progress-spinner
+      mode="indeterminate"
+      diameter="36"
+      class="loading-spinner"
+    ></mat-progress-spinner>
+  </div>
+  <div
+    *ngIf="this.tagLoadingStatus === eProcessStatus.Failed">
+    <span class="error-message">
+      There was an error while loading the legal tag.
+    </span>
+  </div>
+  <div class="edit-container">
+    <form [formGroup]="this.editForm" (ngSubmit)="this.saveLegalTag()">
+      <app-legal-tag-form [form]="this.editForm"></app-legal-tag-form>
+    </form>
+  </div>
+  <div class="footer-container">
+    <div class="action-container">
+      <a
+        mat-raised-button
+        class="action"
+        color="warn"
+        [routerLink]="['/legal']">Cancel</a>
+      <button
+        mat-raised-button
+        class="action"
+        color="primary"
+        [disabled]="!this.editForm.valid"
+        form="this.editForm"
+        (click)="this.saveLegalTag()">
+        Save</button>
+    </div>
+    <div
+      class="loading-container"
+      *ngIf="this.tagSavingStatus === eProcessStatus.InProgress">
+      <span>Saving...</span>
+      <mat-progress-spinner
+        mode="indeterminate"
+        diameter="36"
+        class="loading-spinner"
+      ></mat-progress-spinner>
+    </div>
+    <div
+      *ngIf="this.tagSavingStatus=== eProcessStatus.Failed">
+      <span class="error-message">
+        There was an error while saving the legal tag updates.
+      </span>
+    </div>
+  </div>
+</div>

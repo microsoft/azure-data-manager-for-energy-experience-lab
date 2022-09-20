@@ -1,0 +1,50 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
+# -------HTTP REST CLIENT -------
+# https://marketplace.visualstudio.com/items?itemName=humao.rest-client
+# 
+# Purpose: OAuth2.0 Authorization Code
+
+@login_base = login.microsoftonline.com/{{TENANT_ID}}
+@oauth_token_host = {{login_base}}/oauth2/v2.0/token
+@scopes = {{CLIENT_ID}}/.default openid profile offline_access
+@AUTH_CODE = 
+
+
+# -----------------------
+# OAUTH  authorization_code
+# -----------------------
+###
+# @name authorize
+POST https://{{oauth_token_host}} HTTP/1.1
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=authorization_code
+&redirect_uri=https://experiencelab10030.z21.web.core.windows.net/
+&client_id={{CLIENT_ID}}
+&client_secret={{CLIENT_SECRET}}
+&scope={{scopes}}
+&code={{AUTH_CODE}}
+
+
+# -----------------------
+# OAUTH  refresh_token
+# -----------------------
+###
+# @name refresh
+POST https://{{oauth_token_host}} HTTP/1.1
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=refresh_token
+&client_id={{CLIENT_ID}}
+&client_secret={{CLIENT_SECRET}}
+&refresh_token={{authorize.response.body.refresh_token}}
+&scope={{scopes}}
+
+
+# -----------------------
+# API (Variables)
+# -----------------------
+###
+@access_token = {{refresh.response.body.access_token}}

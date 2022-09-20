@@ -1,0 +1,37 @@
+/* Copyright (c) Microsoft Corporation.
+Licensed under the MIT License. */
+
+.main-container {
+  padding-bottom: 15px;
+  max-width: 450px;
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.loading-spinner {
+  margin-left: 20px;
+}
+
+.error-message {
+  color: #f44336;
+}
+
+.action-container {
+  display: flex;
+  flex-direction: row;
+}
+
+.action-container > .action {
+  margin-right: 10px;
+}
+
+.footer-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  min-height: 43px;
+}

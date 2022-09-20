@@ -1,0 +1,76 @@
+name: Validate
+
+on:
+  workflow_call:
+
+jobs:
+  validate_installation:
+    name: Validate Installation
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./control-plane
+        shell: bash
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Validate main script
+        run: bash -n experiencelab.sh
+
+      - name: Validate container script
+        run: bash -n containerRun.sh
+
+      - name: Validate Dockerfile
+        run: docker build .
+  
+  validate_portal:
+    name: Validate Developer Portal
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./developer-portal
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '14'
+
+      - run: npm install
+      - name: Lint files
+        run: npm run-script lint
+      - name: Create temporary environment file
+        run: |
+          mkdir -p src/environments
+            echo "
+            export const environment = {
+              tenantId: \"\",
+              clientId: \"\",
+              apiHost: \"\",
+              dataPartition: \"\",
+              scopes: \"\",
+              redirectUrl: \"\",
+              instanceName: \"\",
+              domain: \"\",
+              buildNumber: \"\",
+              powerBiConnectorFileName: \"\",
+              tnoTemplateSpecUrl: \"\"
+            };
+            " > src/environments/environment.ts
+      - name: Docker build
+        run: docker build .
+
+  validate_data_load:
+    name: Validate Data Load
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./data-load
+        shell: bash
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Validate TNO download script
+        run: bash -n open-test-data/downloadTnoData.sh

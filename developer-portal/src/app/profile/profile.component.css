@@ -1,0 +1,83 @@
+/* Copyright (c) Microsoft Corporation.
+Licensed under the MIT License. */
+
+.spacing {
+  margin-bottom: 10px;
+}
+
+.token {
+    margin-top: 0px;
+    overflow-x: auto;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    background-color: rgba(0,0,0,.06);
+    padding: 18px;
+    max-width: 50%;
+    min-width: 75%;
+  }
+
+.container {
+  position: relative;
+  min-height: 200px;
+  max-width: 50%;
+  min-width: 75%;
+  margin-bottom: 10px
+}
+
+.table-container {
+  position: relative;
+  max-height: calc(100vh - 474px);
+  overflow: auto;
+}
+
+.filter-field {
+  width: 180px;
+}
+
+table {
+  width: 100%;
+}
+
+.loading-shade {
+  position: absolute;
+  min-height: 200px;
+  top: 0;
+  left: 0;
+  bottom: 56px;
+  right: 0;
+  background: rgba(0, 0, 0, 0.15);
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.user-groups-error-message {
+  color: #f44336;
+  max-width: 360px;
+  text-align: center;
+}
+
+/* Column Widths */
+.mat-column-number,
+.mat-column-state {
+  max-width: 64px;
+}
+
+.mat-column-created {
+  max-width: 124px;
+}
+
+.mat-icon-button {
+  width: 15px;
+  height: 15px;
+  line-height: 15px;
+  margin-left: 6px;
+}
+
+.mat-icon {
+  height: 15px;
+  width: 15px;
+  font-size: 15px;
+  line-height: 15px;
+}

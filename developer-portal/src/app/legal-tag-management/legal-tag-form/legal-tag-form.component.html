@@ -1,0 +1,66 @@
+<!-- Copyright (c) Microsoft Corporation.
+     Licensed under the MIT License. -->
+
+<div class="form-container" [formGroup]="this.form">
+  <mat-form-field appearance="standard">
+    <mat-label>Name</mat-label>
+    <input matInput formControlName="name">
+  </mat-form-field>
+  <mat-form-field appearance="standard">
+    <mat-label>Description</mat-label>
+    <input matInput formControlName="description">
+  </mat-form-field>
+  <div formGroupName="properties" class="properties-container">
+    <mat-form-field appearance="standard">
+      <mat-label>Country of Origin</mat-label>
+      <input matInput formControlName="countryOfOrigin">
+    </mat-form-field>
+    <mat-form-field appearance="standard">
+      <mat-label>Contract ID</mat-label>
+      <input matInput formControlName="contractId">
+    </mat-form-field>
+    <mat-form-field appearance="standard">
+      <mat-label>Data Type</mat-label>
+      <mat-select formControlName="dataType">
+        <mat-option value="Public Domain Data">Public Domain Data</mat-option>
+        <mat-option value="Second Party Data">Second Party Data</mat-option>
+        <mat-option value="First Party Data">First Party Data</mat-option>
+        <mat-option value="Third Party Data">Third Party Data</mat-option>
+        <mat-option value="Transferred Data">Transferred Data</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="standard">
+      <mat-label>Expiration Date</mat-label>
+      <input matInput formControlName="expirationDate">
+      <mat-hint>YYYY-MM-DD</mat-hint>
+    </mat-form-field>
+    <mat-form-field appearance="standard">
+      <mat-label>Export Classification</mat-label>
+      <mat-select formControlName="exportClassification">
+        <mat-option value="No License Required">No License Required</mat-option>
+        <mat-option value="0A998">0A998</mat-option>
+        <mat-option value="Not - Technical Data">Not - Technical Data</mat-option>
+        <mat-option value="EAR99">EAR99</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="standard">
+      <mat-label>Originator</mat-label>
+      <input matInput formControlName="originator">
+    </mat-form-field>
+    <mat-form-field appearance="standard">
+      <mat-label>Personal Data</mat-label>
+      <mat-select formControlName="personalData">
+        <mat-option value="Personally Identifiable">Personally Identifiable</mat-option>
+        <mat-option value="No Personal Data">No Personal Data</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="standard">
+      <mat-label>Security Classifications</mat-label>
+      <mat-select formControlName="securityClassification">
+        <mat-option value="Private">Private</mat-option>
+        <mat-option value="Public">Public</mat-option>
+        <mat-option value="Confidential">Confidential</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+</div>

@@ -1,0 +1,25 @@
+<!-- Copyright (c) Microsoft Corporation.
+     Licensed under the MIT License. -->
+
+<div class="delete-container">
+    <form [formGroup]="this.deleteUserForm" (ngSubmit)="deleteUser()">
+        <div class="form-container">
+            <mat-form-field [floatLabel]="'auto'">
+                <mat-label>Object ID</mat-label>
+                <input matInput formControlName="objectId">
+                <mat-icon matSuffix>person_outline</mat-icon>
+            </mat-form-field>
+            <button class="close-button" mat-icon-button aria-label="close dialog" type="button" mat-dialog-close (click)="this.closeDeleteUser()">
+                <mat-icon class="close-button-icon">close</mat-icon>
+            </button>
+            <div class="submit-and-status-container">
+                <button color="warn" class="delete-button" mat-raised-button type="submit"><mat-icon class="delete-button-icon">close</mat-icon>Remove</button>
+                <div class="status-container">
+                    <span *ngIf="this.deleteStatus === eUserManagementStatus.Succeeded">{{this.deleteUserResultMessage}}</span>
+                    <span *ngIf="this.deleteStatus === eUserManagementStatus.Failed" class="error-message">{{this.deleteUserResultMessage}}</span>
+                </div>
+                <mat-progress-spinner mode="indeterminate" diameter="36" *ngIf="this.deleteStatus === eUserManagementStatus.InProgress"></mat-progress-spinner>
+            </div>
+        </div>
+    </form>
+</div>

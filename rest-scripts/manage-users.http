@@ -1,0 +1,342 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
+# -------HTTP REST CLIENT -------
+# https://marketplace.visualstudio.com/items?itemName=humao.rest-client
+# 
+# Purpose: Manage Users
+
+# -----------------------
+# OAUTH (Variables)
+# -----------------------
+###
+@login_base = login.microsoftonline.com/{{TENANT_ID}}
+@oauth_token_host = {{login_base}}/oauth2/v2.0/token
+@scopes = {{CLIENT_ID}}/.default openid profile offline_access
+
+
+# -----------------------
+# OAUTH  refresh_token
+# -----------------------
+###
+# @name refresh
+POST https://{{oauth_token_host}} HTTP/1.1
+Content-Type: application/x-www-form-urlencoded
+Origin: {{DEVELOPER_PORTAL}}
+
+grant_type=refresh_token
+&client_id={{CLIENT_ID}}
+&refresh_token={{REFRESH_TOKEN}}
+&scope={{scopes}}
+
+
+
+# -----------------------
+# API (Variables)
+# -----------------------
+###
+@access_token = {{refresh.response.body.access_token}}
+@ENDPOINT = https://{{HOST}}
+@ENTITLEMENTS_HOST = {{ENDPOINT}}/api/entitlements/v2
+
+@domain = dataservices.energy
+@user_group = users@{{DATA_PARTITION}}.{{domain}}
+
+# ---------------------------------
+# Group Name
+# ---------------------------------
+# This is the identifier for the group you are adding.
+@group_name = app.trusted
+
+# ---------------------------------
+# Group Type can be Editor/Admin/Ops/Viewer
+# ---------------------------------
+@editors_group_type=users.datalake.editors
+@admins_group_type=users.datalake.admins
+@ops_group_type=users.datalake.ops
+@viewers_group_type=users.datalake.viewers
+
+# ---------------------------------
+# Group Type Email
+# ---------------------------------
+@group_type_email = {{admins_group_type}}@{{DATA_PARTITION}}.{{domain}}
+
+# ---------------------------------
+# USER EMAIL ADDRESS
+# ---------------------------------
+# This is the identifier for the user you are adding.
+# When using AAD, this is the email for the user if adding an AAD user.
+# When using ADD and a Service principal this is the OID of the Service Principal.
+@member_email = <user_oid>
+
+
+# -----------------------
+# Create Users
+# -----------------------
+
+###
+# Purpose: Create a new User.
+# @name createUser
+POST {{ENTITLEMENTS_HOST}}/groups/{{user_group}}/members
+Authorization: Bearer {{access_token}}
+Accept: application/json
+data-partition-id: {{DATA_PARTITION}}
+Content-Type: application/json
+
+{
+  "email": "{{member_email}}",
+  "role": "MEMBER"
+}
+
+
+# -----------------------
+# Manage Roles
+# -----------------------
+
+###
+# Purpose: Validate that the User has groups.
+# @name getUserGroups
+GET {{ENTITLEMENTS_HOST}}/members/{{member_email}}/groups?type=none
+Authorization: Bearer {{access_token}}
+Accept: application/json
+data-partition-id: {{DATA_PARTITION}}
+Content-Type: application/json
+
+
+###
+# Purpose: Assign the user to the datalake.viewers Group
+# @name assignMemberToViewersGroup
+@viewer_group = users.datalake.viewers@{{DATA_PARTITION}}.{{domain}}
+POST {{ENTITLEMENTS_HOST}}/groups/{{viewer_group}}/members
+Authorization: Bearer {{access_token}}
+Accept: application/json
+data-partition-id: {{DATA_PARTITION}}
+Content-Type: application/json
+
+{
+  "email": "{{member_email}}",
+  "role": "MEMBER"
+}
+
+
+###
+# Purpose: Assign the user to the datalake.editors Group
+# @name assignMemberToEditorsGroup
+@editor_group = users.datalake.editors@{{DATA_PARTITION}}.{{domain}}
+POST {{ENTITLEMENTS_HOST}}/groups/{{editor_group}}/members
+Authorization: Bearer {{access_token}}
+Accept: application/json
+data-partition-id: {{DATA_PARTITION}}
+Content-Type: application/json
+
+{
+  "email": "{{member_email}}",
+  "role": "MEMBER"
+}
+
+
+###
+# Purpose: Assign the user to the datalake.admins Group
+# NOTE: This role can not delete for Legal, Schema or Storage
+# @name assignMemberToAdminGroup
+@admin_group = users.datalake.admins@{{DATA_PARTITION}}.{{domain}}
+POST {{ENTITLEMENTS_HOST}}/groups/{{admin_group}}/members
+Authorization: Bearer {{access_token}}
+Accept: application/json
+data-partition-id: {{DATA_PARTITION}}
+Content-Type: application/json
+
+{
+  "email": "{{member_email}}",
+  "role": "MEMBER"
+}
+
+
+###
+# Purpose: Assign the user to the datalake.ops Group
+# NOTE: This role can delete data
+# @name assignMemberToOpsGroup
+@ops_group = users.datalake.ops@{{DATA_PARTITION}}.{{domain}}
+POST {{ENTITLEMENTS_HOST}}/groups/{{ops_group}}/members
+Authorization: Bearer {{access_token}}
+Accept: application/json
+data-partition-id: {{DATA_PARTITION}}
+Content-Type: application/json
+
+{
+  "email": "{{member_email}}",
+  "role": "MEMBER"
+}
+
+
+###
+# Purpose: List the Users with the Role of Reader
+# @name listMembersInViewersGroup
+GET {{ENTITLEMENTS_HOST}}/groups/{{viewer_group}}/members/
+Authorization: Bearer {{access_token}}
+Accept: application/json
+data-partition-id: {{DATA_PARTITION}}
+Content-Type: application/json
+
+###
+# Purpose: List the Users with the Role of Contributor
+# @name listMembersInEditorsGroup
+GET {{ENTITLEMENTS_HOST}}/groups/{{editor_group}}/members/
+Authorization: Bearer {{access_token}}
+Accept: application/json
+data-partition-id: {{DATA_PARTITION}}
+Content-Type: application/json
+
+
+###
+# Purpose: List the Users with the Role of Admin
+# @name listMembersInAdminGroup
+GET {{ENTITLEMENTS_HOST}}/groups/{{admin_group}}/members/
+Authorization: Bearer {{access_token}}
+Accept: application/json
+data-partition-id: {{DATA_PARTITION}}
+Content-Type: application/json
+
+###
+# Purpose: List the Users with the Role of Owner
+# @name listMembersInOpsGropu
+GET {{ENTITLEMENTS_HOST}}/groups/{{ops_group}}/members/
+Authorization: Bearer {{access_token}}
+Accept: application/json
+data-partition-id: {{DATA_PARTITION}}
+Content-Type: application/json
+
+
+###
+# Purpose: Remove the Owner Role from a User
+# @name removeMemberFromOpsGroup
+DELETE {{ENTITLEMENTS_HOST}}/groups/{{ops_group}}/members/{{member_email}}
+Authorization: Bearer {{access_token}}
+Accept: application/json
+data-partition-id: {{DATA_PARTITION}}
+Content-Type: application/json
+
+
+###
+# Purpose: Remove the Admin Role from a User
+# @name removeMemberFromAdminsGroup
+DELETE {{ENTITLEMENTS_HOST}}/groups/{{admin_group}}/members/{{member_email}}
+Authorization: Bearer {{access_token}}
+Accept: application/json
+data-partition-id: {{DATA_PARTITION}}
+Content-Type: application/json
+
+
+###
+# Purpose: Remove the Contributor Role from a User
+# @name removeMemberFromEditorsGroup
+DELETE {{ENTITLEMENTS_HOST}}/groups/{{editor_group}}/members/{{member_email}}
+Authorization: Bearer {{access_token}}
+Accept: application/json
+data-partition-id: {{DATA_PARTITION}}
+Content-Type: application/json
+
+
+###
+# Purpose: Remove the Reader Role from a User
+# @name removeMemberFromViewersGroup
+DELETE {{ENTITLEMENTS_HOST}}/groups/{{viewer_group}}/members/{{member_email}}
+Authorization: Bearer {{access_token}}
+Accept: application/json
+data-partition-id: {{DATA_PARTITION}}
+Content-Type: application/json
+
+
+# -----------------------
+# Delete Users
+# -----------------------
+
+###
+# Purpose: Delete User
+# @name deleteUser
+DELETE {{ENTITLEMENTS_HOST}}/members/{{member_email}}
+Authorization: Bearer {{access_token}}
+Accept: application/json
+data-partition-id: {{DATA_PARTITION}}
+Content-Type: application/json
+
+
+
+# -----------------------------------------------------------------------------------------------------------------
+# These actions are part of deployment processes.
+# -----------------------------------------------------------------------------------------------------------------
+
+
+# ---------------------------------
+# Inititalize Users for a Partition
+# ---------------------------------
+
+###
+# Purpose: Initialize a Partition.
+# NOTE: This API can ONLY be called by the application service principal.
+# @name tenantInit
+POST {{ENTITLEMENTS_HOST}}/tenant-provisioning
+Authorization: Bearer {{access_token}}
+Accept: application/json
+data-partition-id: {{DATA_PARTITION}}
+
+
+###
+# Purpose: Validate the Owner of the Partition.
+# NOTE: The Owner of the partition by default is the service principal.
+# @name rootGroups
+GET {{ENTITLEMENTS_HOST}}/groups
+Authorization: Bearer {{access_token}}
+Accept: application/json
+data-partition-id: {{DATA_PARTITION}}
+
+# -----------------------
+# Create Group
+# -----------------------
+
+###
+# Purpose: Create a new Group.
+# @name createGroup
+POST {{ENTITLEMENTS_HOST}}/groups
+Authorization: Bearer {{access_token}}
+Accept: application/json
+data-partition-id: {{DATA_PARTITION}}
+Content-Type: application/json
+
+{
+  "name": "{{group_name}}",
+  "description": "My Group"
+}
+
+
+# -----------------------
+# Add admin user to group
+# -----------------------
+
+###
+# Purpose: Allow group type to access the group.
+# @name addAccessToGroupType
+POST {{ENTITLEMENTS_HOST}}/groups/{{group_name}}@{{DATA_PARTITION}}.{{domain}}/members
+Authorization: Bearer {{access_token}}
+Accept: application/json
+data-partition-id: {{DATA_PARTITION}}
+Content-Type: application/json
+
+{
+  "email": {{group_type_email}},
+  "role": "MEMBER"
+}
+
+
+# -----------------------
+# Get All groups
+# -----------------------
+
+###
+# Purpose: Get all Groups.
+# @name getAllGroups
+GET {{ENTITLEMENTS_HOST}}/groups
+Authorization: Bearer {{access_token}}
+Accept: application/json
+data-partition-id: {{DATA_PARTITION}}
+Content-Type: application/json

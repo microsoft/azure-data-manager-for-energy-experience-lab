@@ -1,0 +1,93 @@
+/* Copyright (c) Microsoft Corporation.
+Licensed under the MIT License. */
+
+.action-container {
+  display: flex;
+  align-items: center;
+}
+
+.header-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.overview-container {
+  margin-bottom: 15px;;
+}
+
+.spinner {
+  width:50%;
+  margin:0 auto;
+  margin-top: 12px;
+  margin-bottom: 12px;
+}
+
+.error-message {
+  color: #f44336;
+}
+
+.legal-tag-name {
+  min-width: 405px;
+  max-width: 405px;
+}
+
+.contents-container {
+  display: flex;
+  flex-direction: column;
+  margin-right: 25px;
+}
+
+.legal-tag-manage-button {
+  margin-right: 4px;
+  margin-top: 8px;
+  min-width: 73px;
+}
+
+.contents-parent-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  margin-bottom: 15px;
+}
+
+@media screen and (max-width: 900px) {
+  .contents-parent-container {
+    flex-direction: column;
+  }
+}
+
+table {
+  width: 100%;
+}
+
+tr.example-detail-row {
+  height: 0;
+}
+
+tr.legal-tag-row:not(.legal-tag-expanded-row):hover {
+  background: whitesmoke;
+}
+
+tr.legal-tag-row:not(.legal-tag-expanded-row):active {
+  background: #efefef;
+}
+
+.legal-tag-row td {
+  border-bottom-width: 0;
+}
+
+.legal-tag-detail {
+  overflow: hidden;
+  display: flex;
+}
+
+.header-action-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.header-action-container > * {
+  margin-right: 15px;
+}

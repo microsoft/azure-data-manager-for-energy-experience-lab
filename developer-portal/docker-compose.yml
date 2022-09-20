@@ -1,0 +1,15 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
+version: "3.8"
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile-local
+    image: developer-portal-local-development
+    ports:
+      - "80:80"
+    volumes:
+      - .:/app
+      - /app/node_modules

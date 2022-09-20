@@ -1,0 +1,232 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "instanceIdentifier": {
+        "type": "string",
+        "metadata": {
+          "description": "Experience Lab Unique Number (ex: 9178)"
+        }
+      },
+      "logLevel": {
+        "type": "string",
+        "defaultValue": "INFO",
+        "allowedValues": [
+          "DEBUG",
+          "INFO",
+          "WARN",
+          "ERROR"
+        ],
+        "metadata": {
+          "description": "Log level for data load"
+        }
+      }
+    },
+    "variables": {
+      "name": "[concat('experiencelab', parameters('instanceIdentifier'))]",
+      "vaultId": "[resourceId(subscription().subscriptionId, resourceGroup().name, 'Microsoft.KeyVault/vaults', variables('name'))]"
+    },
+    "resources": [
+      {
+        "type": "Microsoft.Resources/deployments",
+        "apiVersion": "2021-04-01",
+        "name": "dataload",
+        "properties": {
+          "mode": "Incremental",
+          "expressionEvaluationOptions": {
+            "scope": "inner"
+          },
+          "parameters": {
+            "clientId": {
+              "reference": {
+                "keyVault": {
+                  "id": "[variables('vaultId')]"
+                },
+                "secretName": "client-id"
+              }
+            },
+            "clientSecret": {
+              "reference": {
+                "keyVault": {
+                  "id": "[variables('vaultId')]"
+                },
+                "secretName": "client-secret"
+              }
+            },
+            "logLevel": {
+              "value": "[parameters('logLevel')]"
+            },
+            "storageKey": {
+              "reference": {
+                "keyVault": {
+                  "id": "[variables('vaultId')]"
+                },
+                "secretName": "storage-account-key"
+              }
+            },
+            "controlPlaneStorageKey": {
+              "reference": {
+                "keyVault": {
+                  "id": "[variables('vaultId')]"
+                },
+                "secretName": "control-plane-storage-account-key"
+              }
+            },
+            "controlPlaneStorageName": {
+              "reference": {
+                "keyVault": {
+                  "id": "[variables('vaultId')]"
+                },
+                "secretName": "control-plane-storage-account-name"
+              }
+            },
+            "name": {
+              "value": "[variables('name')]"
+            }
+          },
+          "template": {
+            "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+            "contentVersion": "1.0.0.0",
+            "parameters": {
+              "name": {
+                "type": "string",
+                "metadata": {
+                  "description": "Experience Lab Unique Number (ex: 9178)"
+                }
+              },
+              "clientId": {
+                "type": "string",
+                "metadata": {
+                  "description": "Client Id."
+                }
+              },
+              "clientSecret": {
+                "type": "string",
+                "metadata": {
+                  "description": "Client Secret."
+                }
+              },
+              "logLevel": {
+                "type": "string",
+                "metadata": {
+                  "description": "Log level for data load"
+                }
+              },
+              "storageKey": {
+                "type": "string",
+                "metadata": {
+                  "description": "Storage Key."
+                }
+              },
+              "controlPlaneStorageKey": {
+                "type": "string",
+                "metadata": {
+                  "description": "Storage Key."
+                }
+              },
+              "controlPlaneStorageName": {
+                "type": "string",
+                "metadata": {
+                  "description": "Storage Key."
+                }
+              }
+            },
+            "variables": {
+              "containerImageName": "open-test-data:latest",
+              "shareName": "open-test-data",
+              "outputShareName": "output"
+            },
+            "resources": [
+              {
+                "type": "Microsoft.ContainerInstance/containerGroups",
+                "apiVersion": "2021-10-01",
+                "name": "[concat('open-test-data')]",
+                "location": "[resourceGroup().location]",
+                "identity": {
+                  "type": "userAssigned",
+                  "userAssignedIdentities": {
+                    "[resourceID('Microsoft.ManagedIdentity/userAssignedIdentities/',parameters('name'))]": {}
+                  }
+                },
+                "properties": {
+                  "imageRegistryCredentials": [
+                    {
+                      "server": "[concat(parameters('name'), '.azurecr.io')]",
+                      "identity": "[resourceID('Microsoft.ManagedIdentity/userAssignedIdentities/',parameters('name'))]"
+                    }
+                  ],
+                  "containers": [
+                    {
+                      "name": "load-data",
+                      "properties": {
+                        "command": [],
+                        "environmentVariables": [
+                          {
+                            "name": "CLIENT_ID",
+                            "value": "[parameters('clientId')]"
+                          },
+                          {
+                            "name": "CLIENT_SECRET",
+                            "secureValue": "[parameters('clientSecret')]"
+                          },
+                          {
+                            "name": "WORKERS",
+                            "value": "50"
+                          },
+                          {
+                            "name": "LOG_LEVEL",
+                            "value": "[parameters('logLevel')]"
+                          }
+                        ],
+                        "image": "[concat(parameters('name'), '.azurecr.io/', variables('containerImageName'))]",
+                        "ports": [],
+                        "volumeMounts": [
+                          {
+                            "name": "opentestdata",
+                            "mountPath": "[concat('/app/', variables('shareName'))]"
+                          },
+                          {
+                            "name": "output",
+                            "mountPath": "[concat('/app/', variables('outputShareName'))]"
+                          }
+                        ],
+                        "resources": {
+                          "requests": {
+                            "cpu": 4,
+                            "memoryInGB": 16
+                          }
+                        }
+                      }
+                    }
+                  ],
+                  "osType": "Linux",
+                  "restartPolicy": "Never",
+                  "volumes": [
+                    {
+                      "name": "opentestdata",
+                      "azureFile": {
+                        "shareName": "[variables('shareName')]",
+                        "storageAccountName": "[parameters('controlPlaneStorageName')]",
+                        "storageAccountKey": "[parameters('controlPlaneStorageKey')]"
+                      }
+                    },
+                    {
+                      "name": "output",
+                      "azureFile": {
+                        "shareName": "[variables('outputShareName')]",
+                        "storageAccountName": "[parameters('name')]",
+                        "storageAccountKey": "[parameters('storageKey')]"
+                      }
+                    }
+                  ]
+                }
+              }
+            ],
+            "outputs": {}
+          }
+        }
+      }
+    ],
+    "outputs": {}
+  }
+  

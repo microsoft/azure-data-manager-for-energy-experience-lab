@@ -1,0 +1,33 @@
+/* Copyright (c) Microsoft Corporation.
+Licensed under the MIT License. */
+
+.create-user-container,
+.overview-container {
+    max-width: 900px;
+}
+
+.spinner {
+  width:50%;
+  margin:0 auto;
+  margin-top: 12px;
+  margin-bottom: 12px;
+}
+
+.button-container {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 14px;
+  margin-right: 6px;
+}
+
+.overlay-container {
+  min-width: 381px;
+}
+
+.create-button-icon {
+  margin: 0 6px 0 -6px;
+}
+
+.error-message {
+  color: #f44336;
+}

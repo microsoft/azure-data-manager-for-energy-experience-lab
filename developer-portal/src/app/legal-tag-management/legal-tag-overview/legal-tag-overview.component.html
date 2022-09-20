@@ -1,0 +1,119 @@
+<!-- Copyright (c) Microsoft Corporation.
+     Licensed under the MIT License. -->
+
+<div class="header-container">
+  <h1>Manage Legal Tags ({{ this.legalTags.length }})</h1>
+  <div class="action-container">
+    <a mat-raised-button color="primary" [routerLink]="['/legal/new']">Add</a>
+  </div>
+</div>
+<div class="overview-container">
+  <mat-progress-spinner
+    class="spinner"
+    mode="indeterminate"
+    diameter="50"
+    *ngIf="this.isLoadingLegalTags()">
+  </mat-progress-spinner>
+  <span *ngIf="this.tagLoadingStatus === this.eProcessStatus.Failed" class="error-message">Unable to load legal tags</span>
+  <ng-container *ngIf="!this.isLoadingLegalTags() && this.tagLoadingStatus === this.eProcessStatus.Succeeded">
+    <div class="header-action-container">
+      <mat-form-field class="filter-field">
+        <input
+          matInput
+          (keyup)="applyFilter($event.target.value)"
+          placeholder="Filter"
+          #input
+        />
+      </mat-form-field>
+      <mat-progress-spinner
+        mode="indeterminate"
+        diameter="32"
+        *ngIf="this.tagDeletingStatus === this.eProcessStatus.InProgress">
+      </mat-progress-spinner>
+      <span *ngIf="this.tagDeletingStatus === this.eProcessStatus.Failed" class="error-message">Unable to delete legal tag</span>
+    </div>
+    <table
+      mat-table
+      [dataSource]="this.legalTagsDataSource"
+      multiTemplateDataRows
+      class="mat-elevation-z8">
+      <ng-container matColumnDef="{{ column }}" *ngFor="let column of columnsToDisplay">
+        <th mat-header-cell *matHeaderCellDef>{{ column }}</th>
+        <td mat-cell *matCellDef="let legalTag">{{ legalTag[column] }}</td>
+      </ng-container>
+      <ng-container matColumnDef="expand">
+        <th mat-header-cell *matHeaderCellDef aria-label="row actions">&nbsp;</th>
+        <td mat-cell *matCellDef="let legalTag">
+          <button
+            mat-icon-button
+            aria-label="expand row"
+            (click)="expandedLegalTag = expandedLegalTag === legalTag ? null : legalTag; $event.stopPropagation()">
+            <mat-icon *ngIf="expandedLegalTag !== legalTag">keyboard_arrow_down</mat-icon>
+            <mat-icon *ngIf="expandedLegalTag === legalTag">keyboard_arrow_up</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="expandedDetail">
+        <td
+          mat-cell
+          *matCellDef="let legalTag"
+          [attr.colspan]="columnsToDisplayWithExpand.length">
+          <div
+            class="legal-tag-detail"
+            [@detailExpand]="
+            legalTag === expandedLegalTag ? 'expanded' : 'collapsed'">
+            <div class="contents-parent-container">
+              <div class="contents-container">
+                <span><strong>Country of Origin: </strong>{{this.legalTag.properties.countryOfOrigin}}</span>
+                <span><strong>Expiration Date </strong>{{this.legalTag.properties.expirationDate}}</span>
+                <span><strong>Contract ID: </strong>{{this.legalTag.properties.contractId}}</span>
+                <span><strong>Originator: </strong>{{this.legalTag.properties.originator}}</span>
+              </div>
+              <div class="contents-container">
+                <span><strong>Data Type: </strong>{{this.legalTag.properties.dataType}}</span>
+                <span><strong>Security Classification: </strong>{{this.legalTag.properties.securityClassification}}</span>
+                <span><strong>Personal Data: </strong>{{this.legalTag.properties.personalData}}</span>
+                <span><strong>Export Classification: </strong>{{this.legalTag.properties.exportClassification}}</span>
+              </div>
+            </div>
+            <div>
+              <a
+                mat-raised-button
+                class="legal-tag-manage-button"
+                color="primary"
+                [routerLink]="['/legal/', this.legalTag.name]"
+                >Edit</a>
+              <button
+                mat-raised-button
+                class="legal-tag-manage-button"
+                color="warn"
+                (click)="this.deleteLegalTag(this.legalTag.name)">
+                Delete</button>
+            </div>
+          </div>
+        </td>
+      </ng-container>
+      <tr mat-header-row *matHeaderRowDef="columnsToDisplayWithExpand"></tr>
+      <tr
+        mat-row
+        *matRowDef="let legalTag; columns: columnsToDisplayWithExpand"
+        class="legal-tag-row"
+        [class.legal-tag-expanded-row]="expandedLegalTag === legalTag"
+        (click)="expandedLegalTag = expandedLegalTag === legalTag ? null : legalTag">
+      </tr>
+      <tr
+        mat-row
+        *matRowDef="let row; columns: ['expandedDetail']"
+        class="example-detail-row">
+      </tr>
+      <tr class="mat-row" *matNoDataRow>
+        <td
+          class="mat-cell"
+          colspan="2"
+          *ngIf="this.failedToLoadLegalTags">
+          No legal tags matching the filter "{{ input.value }}"
+        </td>
+      </tr>
+    </table>
+  </ng-container>
+</div>

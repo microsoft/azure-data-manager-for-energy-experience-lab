@@ -1,0 +1,194 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
+# -------HTTP REST CLIENT -------
+# https://marketplace.visualstudio.com/items?itemName=humao.rest-client
+# 
+# Purpose: Scenario Validation - Open Test Data Load
+
+# -----------------------
+# OAUTH (Variables)
+# -----------------------
+###
+@login_base = login.microsoftonline.com/{{TENANT_ID}}
+@oauth_token_host = {{login_base}}/oauth2/v2.0/token
+@scopes = {{CLIENT_ID}}/.default openid profile offline_access
+
+
+# -----------------------
+# OAUTH  refresh_token
+# -----------------------
+###
+# @name refresh
+POST https://{{oauth_token_host}} HTTP/1.1
+Content-Type: application/x-www-form-urlencoded
+Origin: {{DEVELOPER_PORTAL}}
+
+grant_type=refresh_token
+&client_id={{CLIENT_ID}}
+&refresh_token={{REFRESH_TOKEN}}
+&scope={{scopes}}
+
+
+# -----------------------
+# API (Variables)
+# -----------------------
+###
+@access_token = {{refresh.response.body.access_token}}
+@ENDPOINT = https://{{HOST}}
+@LEGAL_HOST = {{ENDPOINT}}/api/legal/v1
+@SEARCH_HOST = {{ENDPOINT}}/api/search/v2
+@SCHEMA_HOST = {{ENDPOINT}}/api/schema-service/v1
+@authority = osdu
+@source = wks
+@tag = legal-tag-load
+@schema_version = 1.0.0
+
+
+# -----------------------
+# API legal
+# -----------------------
+###
+# @name getTag
+GET {{LEGAL_HOST}}/legaltags/{{DATA_PARTITION}}-{{tag}}
+Authorization: Bearer {{access_token}}
+Accept: application/json
+data-partition-id: {{DATA_PARTITION}}
+
+
+# -------------------------------------------
+# Ingest: Reference Data Manifests (Expect 98)
+# -------------------------------------------
+###
+# @name countReferenceData
+POST {{SEARCH_HOST}}/query
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+data-partition-id: {{DATA_PARTITION}}
+
+{
+  "kind": "{{authority}}:{{source}}:reference-data--*:{{schema_version}}",
+  "query": "legal.legaltags:{{DATA_PARTITION}}-{{tag}}",
+  "offset": 0,
+  "limit": 1
+}
+
+
+# -------------------------------------------
+# Ingest: Master Data Field (Expect 422)
+# -------------------------------------------
+###
+# @name countMasterDataField
+POST {{SEARCH_HOST}}/query
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+data-partition-id: {{DATA_PARTITION}}
+
+{
+  "kind": "{{authority}}:{{source}}:master-data--Field:{{schema_version}}",
+  "query": "legal.legaltags:{{DATA_PARTITION}}-{{tag}}",
+  "offset": 0,
+  "limit": 1
+}
+
+
+# ----------------------------------------------------
+# Ingest: Master Data GeoPoliticalEntities (Expect 406)
+# ----------------------------------------------------
+###
+# @name countMasterDataGeoPoliticalEntity
+POST {{SEARCH_HOST}}/query
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+data-partition-id: {{DATA_PARTITION}}
+
+{
+  "kind": "{{authority}}:{{source}}:master-data--GeoPoliticalEntity:{{schema_version}}",
+  "query": "legal.legaltags:{{DATA_PARTITION}}-{{tag}}",
+  "offset": 0,
+  "limit": 1
+}
+
+
+# ---------------------------------------------
+# Ingest: Master Data Organisation (Expect 213)
+# ---------------------------------------------
+###
+# @name countMasterDataOrganisation
+POST {{SEARCH_HOST}}/query
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+data-partition-id: {{DATA_PARTITION}}
+
+{
+  "kind": "{{authority}}:{{source}}:master-data--Organisation:{{schema_version}}",
+  "query": "legal.legaltags:{{DATA_PARTITION}}-{{tag}}",
+  "offset": 0,
+  "limit": 1
+}
+
+
+# ---------------------------------------------
+# Ingest: Master Data Wells (Expect 4947)
+# ---------------------------------------------
+###
+# @name countWells
+@wellmaster = {{authority}}:{{source}}:master-data--Well:{{schema_version}}
+POST {{SEARCH_HOST}}/query
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+data-partition-id: {{DATA_PARTITION}}
+
+{
+  "kind": "{{wellmaster}}",
+  "query": "legal.legaltags:{{DATA_PARTITION}}-{{tag}}",
+  "offset": 0,
+  "limit": 1
+}
+
+@wellmaster_id = {{countWells.response.body.results[0].id}}
+@wellmaster_totalCount = {{countWells.response.body.totalCount}}
+
+
+# ---------------------------------------------
+# Master Data Wellbore (Expect 6484)
+# ---------------------------------------------
+###
+# @name countWellbores
+@wellboremaster = {{authority}}:{{source}}:master-data--Wellbore:{{schema_version}}
+POST {{SEARCH_HOST}}/query
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+data-partition-id: {{DATA_PARTITION}}
+
+{
+  "kind": "{{wellboremaster}}",
+  "query": "*",
+  "offset": 0,
+  "limit": 1
+}
+
+@wellbore_id = {{countWellbores.response.body.results[0].id}}
+@wellbore_totalCount = {{countWellbores.response.body.totalCount}}
+
+
+# -----------------------------
+# Ingest: Files (Expect 10,000)
+# -----------------------------
+###
+# @name countFiles
+@file = {{authority}}:{{source}}:dataset--File.Generic:1.0.0
+POST {{SEARCH_HOST}}/query
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+data-partition-id: {{DATA_PARTITION}}
+
+{
+  "kind": "{{file}}",
+  "query": "legal.legaltags:{{DATA_PARTITION}}-{{tag}}",
+  "offset": 0,
+  "limit": 3
+}
+
+@file_ID = {{countFiles.response.body.results[0].id}}
+@file_totalCount = {{countFiles.response.body.totalCount}}

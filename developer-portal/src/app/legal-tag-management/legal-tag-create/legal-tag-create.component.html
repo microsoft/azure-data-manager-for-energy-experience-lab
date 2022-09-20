@@ -1,0 +1,28 @@
+<!-- Copyright (c) Microsoft Corporation.
+     Licensed under the MIT License. -->
+
+<h1>Create Legal Tag</h1>
+<div class="creation-container">
+  <form [formGroup]="this.creationForm" (ngSubmit)="createLegalTag()">
+    <app-legal-tag-form [form]="this.creationForm"></app-legal-tag-form>
+    <div class="action-container">
+      <span
+        class="error-message"
+        *ngIf="this.tagCreationStatus === eProcessStatus.Failed">
+        There was an error creating the legal tag. {{this.errorMessage}}
+      </span>
+      <mat-progress-spinner
+        mode="indeterminate"
+        diameter="36"
+        class="processing-spinner"
+        *ngIf="this.tagCreationStatus === eProcessStatus.InProgress"></mat-progress-spinner>
+      <button
+        color="primary"
+        mat-raised-button
+        type="submit"
+        [disabled]="!this.creationForm.valid">Create</button>
+    </div>
+  </form>
+</div>
+
+

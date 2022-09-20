@@ -1,0 +1,31 @@
+<!-- Copyright (c) Microsoft Corporation.
+     Licensed under the MIT License. -->
+
+<mat-divider></mat-divider>
+<div class="row-container">
+    <div class="id-container">
+      <span class="id">{{this.userProfile.id}} - {{this.getGroup()}}</span>
+    </div>
+    <div class="button-container">
+      <button cdkOverlayOrigin #editUserOverlayTrigger="cdkOverlayOrigin" mat-raised-button class="edit-button" color="primary" (click)="this.toggleEditUser()">Edit Group</button>
+      <button mat-raised-button cdkOverlayOrigin #deleteUserOverlayTrigger="cdkOverlayOrigin" class="delete-button" color="warn" (click)="this.toggleDeleteUser()"><mat-icon class="delete-button-icon">close</mat-icon>Remove User</button>
+    </div>
+</div>
+<ng-template
+  cdkConnectedOverlay
+  [cdkConnectedOverlayOrigin]="editUserOverlayTrigger"
+  [cdkConnectedOverlayScrollStrategy]=""
+  [cdkConnectedOverlayOpen]="this.showEditUser">
+  <app-user-edit
+    class="edit-user-overlay-container mat-elevation-z8"
+    [userProfile]="this.userProfile" (closedEditUser)="this.closeEditUser()">Edit user component</app-user-edit>
+</ng-template>
+<ng-template
+  cdkConnectedOverlay
+  [cdkConnectedOverlayOrigin]="deleteUserOverlayTrigger"
+  [cdkConnectedOverlayScrollStrategy]=""
+  [cdkConnectedOverlayOpen]="this.showDeleteUser">
+  <app-user-delete
+    class="delete-user-overlay-container mat-elevation-z8"
+    [userProfile]="this.userProfile" (closedDeleteUser)="this.closeDeleteUser()" (deletedUser)="this.handleDeletedUser($event)">Edit user component</app-user-delete>
+</ng-template>

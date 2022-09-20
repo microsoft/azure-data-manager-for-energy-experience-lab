@@ -1,0 +1,776 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
+# -------HTTP REST CLIENT -------
+# https://marketplace.visualstudio.com/items?itemName=humao.rest-client
+# 
+# Purpose: Scenario Validation - CSV Ingestion
+
+# -----------------------
+# OAUTH (Variables)
+# -----------------------
+###
+@login_base = login.microsoftonline.com/{{TENANT_ID}}
+@oauth_token_host = {{login_base}}/oauth2/v2.0/token
+@scopes = {{CLIENT_ID}}/.default openid profile offline_access
+
+
+# -----------------------
+# OAUTH  refresh_token
+# -----------------------
+###
+# @name refresh
+POST https://{{oauth_token_host}} HTTP/1.1
+Content-Type: application/x-www-form-urlencoded
+Origin: {{DEVELOPER_PORTAL}}
+
+grant_type=refresh_token
+&client_id={{CLIENT_ID}}
+&refresh_token={{REFRESH_TOKEN}}
+&scope={{scopes}}
+
+
+# -----------------------
+# API (Variables)
+# -----------------------
+###
+@access_token = {{refresh.response.body.access_token}}
+@ENDPOINT = https://{{HOST}}
+@ENTITLEMENTS_HOST = {{ENDPOINT}}/api/entitlements/v2
+@LEGAL_HOST = {{ENDPOINT}}/api/legal/v1
+@SCHEMA_HOST = {{ENDPOINT}}/api/schema-service/v1
+@STORAGE_HOST = {{ENDPOINT}}/api/storage/v2
+@FILE_HOST = {{ENDPOINT}}/api/file/v2
+@WORKFLOW_HOST = {{ENDPOINT}}/api/workflow/v1
+@SEARCH_HOST = {{ENDPOINT}}/api/search/v2
+@tag =  {{DATA_PARTITION}}-public-usa-check-1
+@kind = {{DATA_PARTITION}}:qatest:wellbore:0.0.1
+@workflow_name = csv-parser
+
+
+# -----------------------
+# API legal
+# -----------------------
+###
+# @name createTag
+POST {{LEGAL_HOST}}/legaltags
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+data-partition-id: {{DATA_PARTITION}}
+
+{
+  "name": "{{tag}}",
+  "description": "This tag is used by Check Scripts",
+  "properties": {
+    "countryOfOrigin": [
+      "US"
+    ],
+    "contractId": "A1234",
+    "expirationDate": "2023-12-31",
+    "originator": "MyCompany",
+    "dataType": "Transferred Data",
+    "securityClassification": "Public",
+    "personalData": "No Personal Data",
+    "exportClassification": "EAR99"
+  }
+}
+
+
+###
+# @name getTag
+GET {{LEGAL_HOST}}/legaltags/{{tag}}
+Authorization: Bearer {{access_token}}
+Accept: application/json
+data-partition-id: {{DATA_PARTITION}}
+
+
+# -----------------------
+# API: schema
+# -----------------------
+###
+# @name getdatasetFileGeneric
+GET {{SCHEMA_HOST}}/schema/osdu:wks:dataset--File.Generic:1.0.0
+Authorization: Bearer {{access_token}}
+Accept: application/json
+data-partition-id: {{DATA_PARTITION}}
+
+
+###
+# @name createSchema
+PUT {{SCHEMA_HOST}}/schema
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+data-partition-id: {{DATA_PARTITION}}
+
+{
+  "schemaInfo": {
+    "schemaIdentity": {
+      "authority": "{{DATA_PARTITION}}",
+      "source": "qatest",
+      "entityType": "wellbore",
+      "schemaVersionMajor": 0,
+      "schemaVersionMinor": 0,
+      "schemaVersionPatch": 1
+    },
+    "status": "DEVELOPMENT"
+  },
+  "schema": {
+    "license": "Copyright 2021, Microsoft\n\nLicensed under the Apache License, Version 2.0 (the \"License\");\nyou may not use this file except in compliance with the License.\nYou may obtain a copy of the License at\n\nhttp://www.apache.org/licenses/LICENSE-2.0\n\nUnless required by applicable law or agreed to in writing, software\ndistributed under the License is distributed on an \"AS IS\" BASIS,\nWITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\nSee the License for the specific language governing permissions and\nlimitations under the License.\n",
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "description": "The wellbore schema. Used to capture the general information about a wellbore. This information is sometimes called a \"wellbore header\". A wellbore represents the path from surface to a unique bottomhole location. The wellbore object is uniquely identified within the context of one well object.",
+    "id": "https://slb-swt.visualstudio.com/data-management/Ingestion%20Services/_git/wke-schema?path=%2Fdomains%2Fwell%2Fjson_schema%2Fslb_wke_wellbore.json&version=GBmaster",
+    "title": "Wellbore",
+    "type": "object",
+    "definitions": {
+      "wellboreData": {
+        "description": "The domain specific data container for a wellbore.",
+        "title": "Wellbore Data",
+        "type": "object",
+        "properties": {
+          "SPUD_DATE": {
+            "format": "date",
+            "description": "The date and time when activities to drill the borehole begin to create a hole in the earth. For a sidetrack, this is the date kickoff operations began. The format follows ISO 8601 YYYY-MM-DD extended format",
+            "x-slb-aliasProperties": [
+              "witsml:DTimKickoff",
+              "ocean:SPUD_DATE",
+              "drillplan:spud_date"
+            ],
+            "title": "Spud Date",
+            "type": "string",
+            "example": "2013-03-22"
+          },
+          "TVD": {
+            "x-slb-measurement": "True Vertical Depth",
+            "description": "TBD",
+            "x-slb-aliasProperties": [
+              "TBD:TBD"
+            ],
+            "title": "True Vertical Depth",
+            "type": "double",
+            "example": [
+              20711,
+              "TBD"
+            ]
+          },
+          "PERMIT_NUMBER": {
+            "description": "Ther permit number for the wellbore",
+            "x-slb-aliasProperties": [
+              "TBD:TBD"
+            ],
+            "title": "Permit Number",
+            "type": "string",
+            "example": "SMP-09995"
+          },
+          "WELLBORE_NAME": {
+            "description": "TBD",
+            "x-slb-aliasProperties": [
+              "TBD:TBD"
+            ],
+            "title": "Wellbore Name",
+            "type": "string",
+            "example": "SMP G09995 001S0B1"
+          },
+          "CRS": {
+            "description": "Wellbore location CRS",
+            "x-slb-aliasProperties": [
+              "TBD:TBD"
+            ],
+            "title": "CRS",
+            "type": "string",
+            "example": "World Geodetic System 1984"
+          },
+          "LONGUITUDE": {
+            "x-slb-measurement": "Longuitude",
+            "description": "TBD",
+            "x-slb-aliasProperties": [
+              "TBD:TBD"
+            ],
+            "title": "Longuitude",
+            "type": "double",
+            "example": [
+              -119.2,
+              "TBD"
+            ]
+          },
+          "STATE": {
+            "description": "The state, in which the wellbore is located.",
+            "x-slb-aliasProperties": [
+              "witsml:State"
+            ],
+            "title": "State",
+            "type": "string",
+            "example": [
+              "Texas"
+            ]
+          },
+          "CLASS": {
+            "description": "The current class of the wellbore",
+            "x-slb-aliasProperties": [
+              "TBD:TBD"
+            ],
+            "title": "class",
+            "type": "string",
+            "example": "NEW FIELD WILDCAT"
+          },
+          "WELLBORE_SHAPE": {
+            "description": "The shape of the wellbore",
+            "x-slb-aliasProperties": [
+              "TBD:TBD"
+            ],
+            "title": "Wellbore Shape",
+            "type": "string",
+            "example": [
+              "DIRECTIONAL",
+              "VERTICAL"
+            ]
+          },
+          "FORMATION_AT_TD": {
+            "description": "The formation name at the wellbore total depth",
+            "x-slb-aliasProperties": [
+              "witsml:FORMATION_AT_TD"
+            ],
+            "title": "Formation at TD",
+            "type": "string",
+            "example": "MIOCENE LOWER"
+          },
+          "PERMIT_DATE": {
+            "format": "date",
+            "description": "The date and time when the wellbore permit was issued. The format follows ISO 8601 YYYY-MM-DD extended format",
+            "x-slb-aliasProperties": [
+              "witsml:DTimKickoff",
+              "ocean:PERMIT_DATE",
+              "drillplan:PERMIT_DATE"
+            ],
+            "title": "Permit Date",
+            "type": "string",
+            "example": "2013-03-22"
+          },
+          "STATUS": {
+            "description": "The current status of the wellbore",
+            "x-slb-aliasProperties": [
+              "TBD:TBD"
+            ],
+            "title": "Status",
+            "type": "string",
+            "example": "DRY & ABANDONED"
+          },
+          "COUNTRY": {
+            "description": "The country, in which the wellbore is located. The country name follows the convention in ISO 3166-1 'English short country name', see https://en.wikipedia.org/wiki/ISO_3166-1",
+            "x-slb-aliasProperties": [
+              "witsml:Country"
+            ],
+            "x-osdu-natural-key": 4,
+            "title": "Country",
+            "type": "string",
+            "example": [
+              "United States of America"
+            ]
+          },
+          "WB_NUMBER": {
+            "description": "TBD",
+            "x-slb-aliasProperties": [
+              "TBD:TBD"
+            ],
+            "title": "Wellbore Number",
+            "type": "string",
+            "x-osdu-natural-key": 1,
+            "example": "001S0B1"
+          },
+          "MD": {
+            "x-slb-measurement": "Measured Depth",
+            "description": "TBD",
+            "x-slb-aliasProperties": [
+              "TBD:TBD"
+            ],
+            "title": "Measured Depth",
+            "type": "number",
+            "x-osdu-natural-key": 3,
+            "example": 12.2
+          },
+          "ORIGINAL_OPERATOR": {
+            "description": "The original operator of the wellbore.",
+            "x-slb-aliasProperties": [
+              "ocean:Operator",
+              "witsml:Operator"
+            ],
+            "title": "Original Operator",
+            "type": "string",
+            "example": "Anadarko Petroleum"
+          },
+          "BASIN": {
+            "description": "The basin name, to which the wellbore belongs.",
+            "x-slb-aliasProperties": [
+              "witsml:BASIN"
+            ],
+            "title": "Basin",
+            "type": "string",
+            "example": "ATWATER"
+          },
+          "EPSG_CODE": {
+            "description": "EPSG code of the CRS",
+            "x-slb-aliasProperties": [
+              "TBD:TBD"
+            ],
+            "title": "EPSG Code",
+            "type": "number",
+            "example": "4326"
+          },
+          "COUNTY": {
+            "description": "The county, in which the wellbore is located.",
+            "x-slb-aliasProperties": [
+              "witsml:County"
+            ],
+            "title": "County",
+            "type": "string",
+            "example": [
+              "ATWATER VALLEY"
+            ]
+          },
+          "UNIT_SYSTEM": {
+            "description": "Unit system used for the wellbore measurements",
+            "x-slb-aliasProperties": [
+              "TBD:TBD"
+            ],
+            "title": "Unit Sustem",
+            "type": "string",
+            "example": "English"
+          },
+          "UWI": {
+            "description": "The unique wellbore identifier, aka. API number, US well number or UBHI. Codes can have 10, 12 or 14 digits depending on the availability of directional sidetrack (2 digits) and event sequence codes (2 digits).",
+            "x-slb-aliasProperties": [
+              "ocean:UWI",
+              "witsml:SuffixAPI",
+              "drillplan:uwi"
+            ],
+            "title": "Unique Wellbore Identifier",
+            "type": "string",
+            "x-osdu-natural-key": 2,
+            "example": [
+              "SP435844921288",
+              "42-501-20130-01-02"
+            ]
+          },
+          "FIELD": {
+            "description": "The field name, to which the wellbore belongs.",
+            "x-slb-aliasProperties": [
+              "witsml:Field"
+            ],
+            "title": "Field",
+            "type": "string",
+            "example": "ATWATER VLLY B 8"
+          },
+          "INITIAL_COMPLETION_DATE": {
+            "format": "date",
+            "description": "The date and time of the initial completion of the wellbore. The format follows ISO 8601 YYYY-MM-DD extended format",
+            "x-slb-aliasProperties": [
+              "witsml:DTimKickoff",
+              "ocean:INITIAL_COMPLETION_DATE",
+              "drillplan:INITIAL_COMPLETION_DATE"
+            ],
+            "title": "Initial Completion Date",
+            "type": "string",
+            "example": "2013-03-22"
+          },
+          "ELEVATION": {
+            "x-slb-measurement": "Elevation",
+            "description": "TBD",
+            "x-slb-aliasProperties": [
+              "TBD:TBD"
+            ],
+            "title": "Elevation",
+            "type": "integer",
+            "example": [
+              84,
+              "TBD"
+            ]
+          },
+          "STATUS_DATE": {
+            "format": "date",
+            "description": "The date and time of the current status of the wellbore. The format follows ISO 8601 YYYY-MM-DD extended format",
+            "x-slb-aliasProperties": [
+              "witsml:DTimKickoff",
+              "ocean:STATUS_DATE",
+              "drillplan:STATUS_DATE"
+            ],
+            "title": "Status Date",
+            "type": "string",
+            "example": "2013-03-22"
+          },
+          "OPERATOR": {
+            "description": "The operator of the wellbore.",
+            "x-slb-aliasProperties": [
+              "ocean:Operator",
+              "witsml:Operator"
+            ],
+            "title": "Operator",
+            "type": "string",
+            "example": "Anadarko Petroleum"
+          },
+          "LEASE": {
+            "description": "The lease name, to which the wellbore belongs.",
+            "x-slb-aliasProperties": [
+              "witsml:LEASE"
+            ],
+            "title": "LEASE",
+            "type": "string",
+            "example": "SMP G09995"
+          },
+          "LATITUDE": {
+            "x-slb-measurement": "Latitude",
+            "description": "TBD",
+            "x-slb-aliasProperties": [
+              "TBD:TBD"
+            ],
+            "title": "Latitude",
+            "type": "double",
+            "example": [
+              60.2,
+              "TBD"
+            ]
+          },
+          "ELEVATION_REF": {
+            "description": "Elevation reference used for the measurements",
+            "x-slb-aliasProperties": [
+              "TBD:TBD"
+            ],
+            "title": "Elevation reference",
+            "type": "string",
+            "example": "MSL"
+          }
+        },
+        "SpatialLocation": {
+          "description": "The spatial location information such as coordinates, CRS information.",
+          "$ref": "osdu:wks:AbstractSpatialLocation:1.0.0"
+        },
+        "$id": "definitions/wellboreData"
+      }
+    },
+    "properties": {
+      "ancestry": {
+        "description": "The links to data, which constitute the inputs.",
+        "title": "Ancestry",
+        "$ref": "osdu:wks:AbstractLegalParentList:1.0.0"
+      },
+      "data": {
+        "description": "Wellbore data container",
+        "title": "Wellbore Data",
+        "$ref": "#/definitions/wellboreData"
+      },
+      "kind": {
+        "default": "{{kind}}",
+        "description": "OSDU demo wellbore kind specification",
+        "title": "Wellbore Kind",
+        "type": "string"
+      },
+      "meta": {
+        "description": "The meta data section linking the 'unitKey', 'crsKey' to self-contained definitions (persistableReference)",
+        "title": "Frame of Reference Meta Data",
+        "type": "array",
+        "items": {
+          "$ref": "osdu:wks:AbstractMetaItem:1.0.0"
+        }
+      },
+      "legal": {
+        "description": "The geological interpretation's legal tags",
+        "title": "Legal Tags",
+        "$ref": "osdu:wks:AbstractLegalTags:1.0.0"
+      },
+      "acl": {
+        "description": "The access control tags associated with this entity.",
+        "title": "Access Control List",
+        "$ref": "osdu:wks:AbstractAccessControlList:1.0.0"
+      },
+      "id": {
+        "description": "The unique identifier of the wellbore",
+        "title": "Wellbore ID",
+        "type": "string"
+      },
+      "type": {
+        "description": "The reference entity type as declared in common:metadata:entity:*.",
+        "title": "Entity Type",
+        "type": "string"
+      },
+      "version": {
+        "format": "int64",
+        "description": "The version number of this wellbore; set by the framework.",
+        "title": "Entity Version Number",
+        "type": "number",
+        "example": "1040815391631285"
+      }
+    }
+  }
+}
+
+###
+# @name getSchema
+GET {{SCHEMA_HOST}}/schema/{{kind}}
+Authorization: Bearer {{access_token}}
+Accept: application/json
+data-partition-id: {{DATA_PARTITION}}
+
+
+# -----------------------
+# API: file
+# -----------------------
+###
+# @name uploadURL
+GET {{FILE_HOST}}/files/uploadURL
+Authorization: Bearer {{access_token}}
+Accept: application/json
+Content-Type: application/json
+data-partition-id: {{DATA_PARTITION}}
+
+@FILE_ID = {{uploadURL.response.body.FileID}}
+@FILE_URL = {{uploadURL.response.body.Location.SignedURL}}
+@FILE_SOURCE = {{uploadURL.response.body.Location.FileSource}}
+
+
+###
+# @name uploadFile
+PUT {{FILE_URL}}
+x-ms-blob-type: BlockBlob
+
+< ./sample.csv
+
+
+###
+# @name metaData
+POST {{FILE_HOST}}/files/metadata
+Authorization: Bearer {{access_token}}
+Accept: application/json
+Content-Type: application/json
+data-partition-id: {{DATA_PARTITION}}
+
+{
+  "id": "opendes:dataset--File.Generic:372035cd-e426-4628-a604-a09dcbedf58c",
+  "version": 1613026613300180,
+  "kind": "{{DATA_PARTITION}}:wks:dataset--File.Generic:1.0.0",
+  "acl": {
+    "viewers": [
+      "data.default.viewers@{{DATA_PARTITION}}.dataservices.energy"
+    ],
+    "owners": [
+      "data.default.viewers@{{DATA_PARTITION}}.dataservices.energy"
+    ]
+  },
+  "legal": {
+    "legaltags": [
+      "{{tag}}"
+    ],
+    "otherRelevantDataCountries": [
+      "US"
+    ],
+    "status": "compliant"
+  },
+  "tags": {
+    "dataflowId": "test-dataflowid-proxy"
+  },
+  "data": {
+    "Endian": "BIG",
+    "Checksum": "string",
+    "DatasetProperties": {
+      "FileSourceInfo": {
+        "FileSource": "{{FILE_SOURCE}}",
+        "Name": "sample.csv"
+      }
+    },
+    "ExtensionProperties": {
+      "Classification": "Raw File",
+      "Description": "An text further describing this file example.",
+      "ExternalIds": [
+        "string"
+      ],
+      "FileDateCreated": {},
+      "FileDateModified": {},
+      "FileContentsDetails": {
+        "TargetKind": "{{kind}}",
+        "FileType": "csv",
+        "FrameOfReference": [
+          {
+            "kind": "CRS",
+            "name": "GCS_WGS_1984",
+            "persistableReference": "{\"wkt\":\"GEOGCS[\\\"GCS_WGS_1984\\\",DATUM[\\\"D_WGS_1984\\\",SPHEROID[\\\"WGS_1984\\\",6378137.0,298.257223563]],PRIMEM[\\\"Greenwich\\\",0.0],UNIT[\\\"Degree\\\",0.0174532925199433],AUTHORITY[\\\"EPSG\\\",4326]]\",\"ver\":\"PE_10_3_1\",\"name\":\"GCS_WGS_1984\",\"authCode\":{\"auth\":\"EPSG\",\"code\":\"4326\"},\"type\":\"LBC\"}",
+            "propertyNames": [
+              "LATITUDE",
+              "LONGUITUDE"
+            ],
+            "propertyValues": [
+              "deg"
+            ],
+            "uncertainty": 0
+          },
+          {
+            "kind": "DateTime",
+            "persistableReference": "{\"type\": \"DAT\", \"format\": \"MM-dd-yyyy\"}",
+            "propertyNames": [
+              "PERMIT_DATE",
+              "INITIAL_COMPLETION_DATE",
+              "STATUS_DATE",
+              "SPUD_date"
+            ],
+            "propertyValues": [],
+            "uncertainty": 0
+          },
+          {
+            "kind": "Unit",
+            "name": "ft",
+            "persistableReference": "{\"scaleOffset\":{\"scale\":0.3048,\"offset\":0.0},\"symbol\":\"ft\",\"baseMeasurement\":{\"ancestry\":\"Length\",\"type\":\"UM\"},\"type\":\"USO\"}",
+            "propertyNames": [
+              "MD",
+              "TVD",
+              "ELEVATION"
+            ],
+            "propertyValues": [
+              "ft"
+            ],
+            "uncertainty": 0
+          }
+        ],
+        "relatedNaturalKey": [
+          {
+            "singlekey": {
+              "sourceColumn": "UWI",
+              "targetKind": "{{kind}}",
+              "targetAttribute": "UWI",
+              "relationship-name": "Wellbore"
+            }
+          }
+        ],
+        "ParentReference": "CSBE0417"
+      }
+    },
+    "EncodingFormatTypeID": "string",
+    "Name": "sample.csv",
+    "SchemaFormatTypeID": "string"
+  },
+  "meta": []
+}
+
+@ID = {{metaData.response.body.id}}
+
+
+###
+# @name getMetaData
+GET {{FILE_HOST}}/files/{{ID}}/metadata
+Authorization: Bearer {{access_token}}
+Accept: application/json
+Content-Type: application/json
+data-partition-id: {{DATA_PARTITION}}
+
+
+# -----------------------
+# API: workflow
+# -----------------------
+###
+# @name getWorkflow
+GET {{WORKFLOW_HOST}}/workflow/{{workflow_name}}
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+data-partition-id: {{DATA_PARTITION}}
+
+
+###
+# @name runWorkflow
+POST {{WORKFLOW_HOST}}/workflow/{{workflow_name}}/workflowRun
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+data-partition-id: {{DATA_PARTITION}}
+
+{
+  "executionContext": {
+    "dataPartitionId": "{{DATA_PARTITION}}",
+    "id": "{{ID}}"
+  }
+}
+
+@runId = {{runWorkflow.response.body.runId}}
+
+
+###
+# @name getWorkflowPreDefinedId
+GET {{WORKFLOW_HOST}}/workflow/{{workflow_name}}/workflowRun/{{runId}}
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+data-partition-id: {{DATA_PARTITION}}
+
+
+# -----------------------
+# API: search
+# -----------------------
+###
+# @name searchRecord1
+POST {{SEARCH_HOST}}/query
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+data-partition-id: {{DATA_PARTITION}}
+
+{
+  "kind": "{{kind}}",
+  "query": "data.UWI:\"MS1010\"",
+  "offset": 0,
+  "limit": 10
+}
+
+@all_totalCount = {{searchRecord1.response.body.totalCount}}
+@record_id1 = {{searchRecord1.response.body.results[0].id}}
+
+
+###
+# @name ValidateRecord1
+GET {{STORAGE_HOST}}/records/{{record_id1}}
+Authorization: Bearer {{access_token}}
+Accept: application/json
+data-partition-id: {{DATA_PARTITION}}
+
+
+###
+# @name searchRecord2
+POST {{SEARCH_HOST}}/query
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+data-partition-id: {{DATA_PARTITION}}
+
+{
+  "kind": "{{kind}}",
+  "query": "data.UWI:\"MS1011\"",
+  "offset": 0,
+  "limit": 10
+}
+
+@all_totalCount = {{searchRecord2.response.body.totalCount}}
+@record_id2 = {{searchRecord2.response.body.results[0].id}}
+
+
+###
+# @name ValidateRecord2
+GET {{STORAGE_HOST}}/records/{{record_id2}}
+Authorization: Bearer {{access_token}}
+Accept: application/json
+data-partition-id: {{DATA_PARTITION}}
+
+
+# -----------------------
+# CLEANUP
+# -----------------------
+###
+# @name deleteRecord1
+DELETE {{STORAGE_HOST}}/records/{{record_id1}}
+Authorization: Bearer {{access_token}}
+Accept: application/json
+data-partition-id: {{DATA_PARTITION}}
+
+
+###
+# @name deleteRecord2
+DELETE {{STORAGE_HOST}}/records/{{record_id2}}
+Authorization: Bearer {{access_token}}
+Accept: application/json
+data-partition-id: {{DATA_PARTITION}}
+
+
+###
+# @name deleteTag
+DELETE {{LEGAL_HOST}}/legaltags/{{tag}}
+Authorization: Bearer {{access_token}}
+Accept: application/json
+data-partition-id: {{DATA_PARTITION}}

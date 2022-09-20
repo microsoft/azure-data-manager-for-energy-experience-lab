@@ -1,0 +1,14 @@
+name: CI
+
+on:
+  push:
+    branches: [ "main" ]
+    paths-ignore:
+      - 'artifacts/**'
+
+  workflow_dispatch:
+
+jobs:
+  validate:
+    name: Validation
+    uses: ./.github/workflows/validate.yml

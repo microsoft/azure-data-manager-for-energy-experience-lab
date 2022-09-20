@@ -1,0 +1,17 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
+FROM mcr.microsoft.com/mirror/docker/library/node:18
+
+WORKDIR /app
+
+# Install dependencies
+COPY package.json /app/package.json
+RUN npm install
+RUN npm install -g @angular/cli
+
+# Copy the site to the working directory
+COPY . /app
+
+# Run the site
+CMD ng serve --host 0.0.0.0 --port 80 --disableHostCheck=true --poll 100

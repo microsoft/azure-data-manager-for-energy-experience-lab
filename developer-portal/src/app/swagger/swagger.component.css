@@ -1,0 +1,9 @@
+/* Copyright (c) Microsoft Corporation.
+Licensed under the MIT License. */
+
+.alert {
+    padding: 20px;
+    background-color: #ffe895;
+    color: black;
+    margin-top: 15px;
+}

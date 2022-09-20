@@ -1,0 +1,73 @@
+<!-- Copyright (c) Microsoft Corporation.
+     Licensed under the MIT License. -->
+
+<h1>Overview</h1>
+<p>
+  This component assists in testing Microsoft Energy Data Services REST APIs to execute underlying service API calls or
+  perform functional flows.
+</p>
+
+<div id="getting-started">
+  <h2>Getting Started</h2>
+  <p>There are many different ways that REST APIs can be called from the use of simple curl commands to complex Postman
+    projects. For this lab, a <a
+      href="https://marketplace.visualstudio.com/items?itemName=humao.rest-client" target="_blank" rel="noopener noreferrer">Rest Client</a> will be used
+    for a simple way to send a request. This extension allows for simple http scripts to be executed and leverages
+    Visual Studio Settings to be able to easily point to different environments.</p>
+  <ol>
+    <li>Install <a href="https://code.visualstudio.com" target="_blank" rel="noopener noreferrer">Visual Studio Code</a></li>
+    <li>Download and install <a
+        href="https://marketplace.visualstudio.com/items?itemName=humao.rest-client" target="_blank" rel="noopener noreferrer">REST Client</a> for Visual
+      Studio Code</li>
+    <li>Download, extract, and open <a href="/assets/rest-scripts.zip">REST
+        Scripts</a> in Visual Studio Code</li>
+    <li>In Visual Studio Code please open the Preferences/Settings and directly edit the settings.json file. This file
+      can also be opened using the VSCode Command Palette and searching for: `Preferences: Open Settings (JSON)`.
+    </li>
+    <li>Paste the following JSON into the settings.json file and save it which allows for the use of the REST Client
+      Environments. </li>
+    <button mat-button color="primary" (click)="this.toggleRestClientSettings()">{{ this.restClientSettingsLabel }}</button>
+    <div *ngIf="this.showRestClientSettings">
+      <pre><code>
+        "rest-client.environmentVariables": &#123;
+            "{{this.instanceName}}": &#123;
+                "TENANT_ID": "{{this.tenantId}}",
+                "CLIENT_ID": "{{this.clientId}}",
+                "HOST": "{{this.host}}",
+                "DATA_PARTITION": "{{this.dataPartition}}",
+                "DEVELOPER_PORTAL": "{{this.developerPortalUrl}}",
+                "REFRESH_TOKEN": "{{this.refreshToken}}"
+            &#125;
+        &#125;
+      </code></pre>
+    </div>
+    <li>Open the VSCode Command Pallette and choose `Rest Client: Switch Environment`, and select
+      {{this.instanceName}}.</li>
+  </ol>
+</div>
+
+<div id="core-validation">
+  <h2>Perform a Core Functionality Validation Test.</h2>
+  <p>Basic core functionality for includes: the creation of a legal tag, the submission of a storage record,
+    and then the search and retrieval for that record.</p>
+
+  <h3>Execute Send Requests</h3>
+  <p>Send Requests from rest/check-core.http</p>
+</div>
+
+<div id="check-manifest">
+  <h2>Perform a Manifest Ingestion</h2>
+  <p>Basic manifest ingestion functionality includes: the creation of a legal tag, triggering a workflow,
+    retrieving the status, waiting for completion, and then querying for the data uploaded.</p>
+  <h3>Execute Send Requests</h3>
+  <p>Send Requests from rest/check-csv.http</p>
+</div>
+
+<div id="csv-ingestion">
+  <h2>Perform a CSV Ingestion</h2>
+  <p>Basic csv data ingestion functionality includes: the creation of a legal tag, creation of a schema,
+    retrieval of an Upload URL, uploading a CSV file to that URL, triggering the workflow, retrieving the
+    status, waiting for completion, and then querying the data uploaded.</p>
+  <h3>Execute Send Requests</h3>
+  <p>Send Requests from rest/check-csv.http</p>
+</div>

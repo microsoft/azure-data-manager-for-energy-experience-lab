@@ -1,0 +1,116 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
+@import '~@angular/material/theming';
+$custom-typography: mat-typography-config(
+  $font-family: '"Segoe UI Web (West European)","Segoe UI",-apple-system,BlinkMacSystemFont,Roboto,"Helvetica Neue",sans-serif',
+);
+@include mat-core($custom-typography);
+
+$portal-primary-color-palette: (
+    50: #E0EFFA,
+    100: #80BCEA ,
+    200: #80BCEA,
+    300: #4DA1E1,
+    400: #268CDA,
+    500: #0078D4,
+    600: #0070CF,
+    700: #0065C9,
+    800: #005BC3,
+    900: #0048B9,
+    A100: #E2EBFF,
+    A200: #AFC9FF,
+    A400: #7CA6FF,
+    A700: #6394FF,
+    contrast: (
+        50: #000000,
+        100: #000000,
+        200: #000000,
+        300: #000000,
+        400: #ffffff,
+        500: #ffffff,
+        600: #ffffff,
+        700: #ffffff,
+        800: #ffffff,
+        900: #ffffff,
+        A100: #000000,
+        A200: #000000,
+        A400: #000000,
+        A700: #000000,
+    )
+);
+
+$portal-accent-color-palette: (
+    50: #e0e4ea,
+    100: #b3bccb,
+    200: #8090a8,
+    300: #4d6385,
+    400: #26416a,
+    500: #002050,
+    600: #001c49,
+    700: #001840,
+    800: #001337,
+    900: #000b27,
+    A100: #627bff,
+    A200: #2f50ff,
+    A400: #0028fb,
+    A700: #0024e1,
+    contrast: (
+        50: #000000,
+        100: #000000,
+        200: #000000,
+        300: #ffffff,
+        400: #ffffff,
+        500: #ffffff,
+        600: #ffffff,
+        700: #ffffff,
+        800: #ffffff,
+        900: #ffffff,
+        A100: #000000,
+        A200: #ffffff,
+        A400: #ffffff,
+        A700: #ffffff,
+    )
+);
+
+
+$portal-warn-color-palette: (
+    50: #fce2e5,
+    100: #f8b8bd,
+    200: #f48891,
+    300: #ef5865,
+    400: #eb3544,
+    500: #e81123,
+    600: #e50f1f,
+    700: #e20c1a,
+    800: #de0a15,
+    900: #d8050c,
+    A100: #ffffff,
+    A200: #ffcece,
+    A400: #ff9b9c,
+    A700: #ff8183,
+    contrast: (
+        50: #000000,
+        100: #000000,
+        200: #000000,
+        300: #000000,
+        400: #ffffff,
+        500: #ffffff,
+        600: #ffffff,
+        700: #ffffff,
+        800: #ffffff,
+        900: #ffffff,
+        A100: #000000,
+        A200: #000000,
+        A400: #000000,
+        A700: #000000,
+    )
+);
+
+
+
+$primary-color: mat-palette($portal-primary-color-palette);
+$accent-color: mat-palette($portal-accent-color-palette);
+$warn-color:    mat-palette($portal-warn-color-palette);
+$portal-theme: mat-light-theme($primary-color, $accent-color, $warn-color);
+@include angular-material-theme($portal-theme);

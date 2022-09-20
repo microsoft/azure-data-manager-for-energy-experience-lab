@@ -1,0 +1,34 @@
+/* Copyright (c) Microsoft Corporation.
+Licensed under the MIT License. */
+
+.row-button {
+  align-self: center;
+}
+
+.button-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.button-icon {
+  padding-bottom: 5px;
+  padding-right: 10px;
+}
+
+.member-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  line-height: 4em;
+}
+
+.overlay-container {
+  min-width: 381px;
+}
+
+.row-overview-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
