@@ -2,7 +2,7 @@
 
 ## About
 
-The developer portal is a getting started Angular website that includes instructions for calling Microsoft Energy Data Services APIs, functions for retrieving Authorization tokens, sample Power BI integration, and more. It can be created from a control plane or run locally against an existing service instance.
+The developer portal is a getting started Angular website that includes instructions for calling Microsoft Energy Data Services APIs, functions for retrieving Authorization tokens, sample Power BI integration, basic user management, and more. It can be created from a control plane or run locally against an existing service instance.
 
 ## Run via Local Machine
 
@@ -75,7 +75,7 @@ docker run -d -p 80:80 <image name>
 
 Access the website at <http://localhost:80>
 
-## Running the site in a Linux based Azure Web App
+### Running the site in a Linux based Azure Web App
 
 The website and [Dockerfile](Dockerfile) is ready to be deployed in a Linux based Azure Web App. Simply run the following commands to host the site in Azure
 
@@ -95,7 +95,25 @@ az webapp create -g <resource group> -p <app service plan name> -n <web app name
 
 Access the website at `https://<web app name>.azurewebsites.net`
 
-## Linting Code
+## Reference
+
+### User Management
+
+You can manage users and group membership in the `/users` page of the developer portal. You can add users to one of the following groups:
+
+1. Reader - users.datalake.viewers
+1. Contributor - users.datalake.editors
+1. Admin - users.datalake.admins
+1. Owner - users.datalake.ops
+
+You can also manage user membership in data groups/ACLs. The following ACLs will exist by default. The `users.data.root` group will be added to each ACL.
+
+1. data.default.viewers
+1. data.default.owners
+1. data.tno.viewers (The TNO data set will be associated with this group)
+1. data.tno.owners (The TNO data set will be associated with this group)
+
+### Linting Code
 
 Use the CLI command
 
@@ -105,7 +123,7 @@ Use the CLI command
 
 Use the VS Code extension [ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint)
 
-## Updating NPM packages
+### Updating NPM packages
 
 We use [npm-check-updates](https://www.npmjs.com/package/npm-check-updates) to update the packages to the latest version.
 
@@ -114,7 +132,7 @@ We use [npm-check-updates](https://www.npmjs.com/package/npm-check-updates) to u
   npm install
 ```
 
-## Resources
+### Resources
 
 Msal Login [Tutorial: Sign in users and call the Microsoft Graph API from an Angular single-page application (SPA) using auth code flow](https://docs.microsoft.com/en-us/azure/active-directory/develop/tutorial-v2-angular-auth-code#sign-in-a-user)
 
