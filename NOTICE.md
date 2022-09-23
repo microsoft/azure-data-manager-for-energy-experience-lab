@@ -195,7 +195,7 @@ This repository incorporates material as listed below or described in the code.
       same "printed page" as the copyright notice for easier
       identification within third-party archives.
 
-   Copyright 2020 Microsoft Corporation.
+   Copyright 2022 Microsoft Corporation.
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
