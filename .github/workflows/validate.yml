@@ -58,6 +58,8 @@ jobs:
               tnoTemplateSpecUrl: \"\"
             };
             " > src/environments/environment.ts
+      - name: Unit tests
+        run: npm run-script test
       - name: Docker build
         run: docker build .
 
