@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { LegalTagOverviewComponent } from './legal-tag-overview.component';
 
 describe('LegalTagOverviewComponent', () => {
@@ -10,12 +11,10 @@ describe('LegalTagOverviewComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ LegalTagOverviewComponent ]
+      declarations: [ LegalTagOverviewComponent ],
+      imports: [ HttpClientTestingModule ]
     })
     .compileComponents();
-  });
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(LegalTagOverviewComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
