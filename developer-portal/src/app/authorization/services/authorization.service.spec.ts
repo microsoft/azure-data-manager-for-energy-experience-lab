@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 import { TestBed } from '@angular/core/testing';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 import { AuthorizationService } from './authorization.service';
 
@@ -9,7 +10,10 @@ describe('AuthorizationService', () => {
   let service: AuthorizationService;
 
   beforeEach(() => {
-    TestBed.configureTestingModule({});
+    TestBed.configureTestingModule({
+      imports: [HttpClientTestingModule],
+      providers: [AuthorizationService]
+    });
     service = TestBed.inject(AuthorizationService);
   });
 

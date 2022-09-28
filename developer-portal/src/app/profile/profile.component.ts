@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
+import { AfterContentInit, Component, OnInit, ViewChild } from '@angular/core';
 import { MsalService } from '@azure/msal-angular';
 import { environment } from 'src/environments/environment';
 import { ProfileService } from '../services/profile.service';
@@ -21,7 +21,7 @@ class Tokens {
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.css']
 })
-export class ProfileComponent implements OnInit, AfterViewInit {
+export class ProfileComponent implements OnInit, AfterContentInit {
   public profile: UserProfile;
   public groupsDataSource: MatTableDataSource<any>;
   public tokens = new Tokens();
@@ -49,7 +49,7 @@ export class ProfileComponent implements OnInit, AfterViewInit {
     this.getGroups();
   }
 
-  ngAfterViewInit(): void {
+  ngAfterContentInit (): void {
     this.configureTable();
   }
 
