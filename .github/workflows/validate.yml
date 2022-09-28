@@ -59,7 +59,7 @@ jobs:
             };
             " > src/environments/environment.ts
       - name: Unit tests
-        run: npm run-script test
+        run: npm run-script test:prod
       - name: Docker build
         run: docker build .
 
