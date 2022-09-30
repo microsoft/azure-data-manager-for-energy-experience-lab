@@ -27,11 +27,14 @@ Experience Lab is only recommended for non-production use cases. It is open sour
 ### Requirements
 
 - Experience Lab must be deployed in a region currently supported by Microsoft Energy Data Services.
+- Your subscription must be whitelisted for Microsoft Energy Data Services.
 - The default installation script for the Experience Lab control plane requires the following privileges:
-  - Owner or Contributor + User Access Administrator at the subscription level.
+  - Owner, Service Administrator, Co-Administrator, or Contributor + User Access Administrator at the subscription level.
   - Permission to register an application with your Azure AD tenant.
 
 ### Create Control Plane Via ARM Template
+
+Use the button below to deploy the Experience Lab Control Plane to your Azure Subscription. Further instructions are in [`/control-plane`](/control-plane)
 
 [![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmicrosoft%2Fenergy-data-services-experience-lab%2Fmain%2Fazuredeploy.json)
 

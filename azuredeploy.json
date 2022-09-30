@@ -5,22 +5,21 @@
     "_generator": {
       "name": "bicep",
       "version": "0.10.61.36676",
-      "templateHash": "1648844848847632394"
+      "templateHash": "16860851905053225218"
     }
   },
   "parameters": {
-    "resourceGroupPrefix": {
+    "controlPlaneName": {
       "type": "string",
-      "defaultValue": "EnergyDataServices",
       "metadata": {
-        "description": "Resource Group Prefix"
+        "description": "Control Plane Name"
       }
     },
-    "resourceGroupLocation": {
+    "controlPlaneLocation": {
       "type": "string",
       "defaultValue": "eastus",
       "metadata": {
-        "description": "Resource Group Location"
+        "description": "Control Plane Location"
       }
     }
   },
@@ -28,14 +27,14 @@
     {
       "type": "Microsoft.Resources/resourceGroups",
       "apiVersion": "2021-01-01",
-      "name": "[format('experiencelab-controlplane-{0}', parameters('resourceGroupPrefix'))]",
-      "location": "[parameters('resourceGroupLocation')]"
+      "name": "[format('experiencelab-controlplane-{0}', parameters('controlPlaneName'))]",
+      "location": "[parameters('controlPlaneLocation')]"
     },
     {
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2020-10-01",
       "name": "labStorage",
-      "resourceGroup": "[format('experiencelab-controlplane-{0}', parameters('resourceGroupPrefix'))]",
+      "resourceGroup": "[format('experiencelab-controlplane-{0}', parameters('controlPlaneName'))]",
       "properties": {
         "expressionEvaluationOptions": {
           "scope": "inner"
@@ -43,7 +42,7 @@
         "mode": "Incremental",
         "parameters": {
           "location": {
-            "value": "[parameters('resourceGroupLocation')]"
+            "value": "[parameters('controlPlaneLocation')]"
           }
         },
         "template": {
@@ -53,7 +52,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.10.61.36676",
-              "templateHash": "11261844440146180589"
+              "templateHash": "7696637269887787157"
             }
           },
           "parameters": {
@@ -133,7 +132,7 @@
                     "value": "[parameters('containerName')]"
                   }
                 ],
-                "scriptContent": "      #!/bin/bash\r\n      set -e\r\n\r\n      echo \\\"Downloading Container Script: File- experiencelab.sh\\\"\r\n      wget -O experiencelab.sh https://github.com/microsoft/energy-data-services-experience-lab/releases/latest/download/experiencelab.sh\r\n      az storage blob upload -f experiencelab.sh -c $AZURE_STORAGE_CONTAINER -n experiencelab.sh\r\n\r\n      echo \\\"Downloading Container Script: File- template-open-test-data.json\\\"\r\n      wget -O template-open-test-data.json https://github.com/microsoft/energy-data-services-experience-lab/releases/latest/download/template.json\r\n      az storage blob upload -f template-open-test-data.json -c $AZURE_STORAGE_CONTAINER -n template-open-test-data.json\r\n\r\n      echo \\\"Downloading Container Script: File- downloadTnoData.sh\\\"\r\n      wget -O downloadTnoData.sh https://github.com/microsoft/energy-data-services-experience-lab/releases/latest/download/downloadTnoData.sh\r\n      az storage blob upload -f downloadTnoData.sh -c $AZURE_STORAGE_CONTAINER -n downloadTnoData.sh\r\n\r\n      echo \\\"Downloading Container Script: File- developer-portal.tar.gz\\\"\r\n      wget -O developer-portal.tar.gz https://github.com/microsoft/energy-data-services-experience-lab/releases/latest/download/developer-portal.tar.gz\r\n      az storage blob upload -f developer-portal.tar.gz -c $AZURE_STORAGE_CONTAINER -n developer-portal.tar.gz\r\n\r\n      echo \\\"Downloading Container Script: File- rest-scripts.zip\\\"\r\n      wget -O rest-scripts.zip https://github.com/microsoft/energy-data-services-experience-lab/releases/latest/download/rest-scripts.zip\r\n      az storage blob upload -f rest-scripts.zip -c $AZURE_STORAGE_CONTAINER -n rest-scripts.zip\r\n    "
+                "scriptContent": "      #!/bin/bash\n      set -e\n\n      echo \\\"Downloading Container Script: File- experiencelab.sh\\\"\n      wget -O experiencelab.sh https://github.com/microsoft/energy-data-services-experience-lab/releases/latest/download/experiencelab.sh\n      az storage blob upload -f experiencelab.sh -c $AZURE_STORAGE_CONTAINER -n experiencelab.sh\n\n      echo \\\"Downloading Container Script: File- template-open-test-data.json\\\"\n      wget -O template-open-test-data.json https://github.com/microsoft/energy-data-services-experience-lab/releases/latest/download/template.json\n      az storage blob upload -f template-open-test-data.json -c $AZURE_STORAGE_CONTAINER -n template-open-test-data.json\n\n      echo \\\"Downloading Container Script: File- downloadTnoData.sh\\\"\n      wget -O downloadTnoData.sh https://github.com/microsoft/energy-data-services-experience-lab/releases/latest/download/downloadTnoData.sh\n      az storage blob upload -f downloadTnoData.sh -c $AZURE_STORAGE_CONTAINER -n downloadTnoData.sh\n\n      echo \\\"Downloading Container Script: File- developer-portal.tar.gz\\\"\n      wget -O developer-portal.tar.gz https://github.com/microsoft/energy-data-services-experience-lab/releases/latest/download/developer-portal.tar.gz\n      az storage blob upload -f developer-portal.tar.gz -c $AZURE_STORAGE_CONTAINER -n developer-portal.tar.gz\n\n      echo \\\"Downloading Container Script: File- rest-scripts.zip\\\"\n      wget -O rest-scripts.zip https://github.com/microsoft/energy-data-services-experience-lab/releases/latest/download/rest-scripts.zip\n      az storage blob upload -f rest-scripts.zip -c $AZURE_STORAGE_CONTAINER -n rest-scripts.zip\n    "
               },
               "dependsOn": [
                 "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]"
@@ -153,14 +152,14 @@
         }
       },
       "dependsOn": [
-        "[subscriptionResourceId('Microsoft.Resources/resourceGroups', format('experiencelab-controlplane-{0}', parameters('resourceGroupPrefix')))]"
+        "[subscriptionResourceId('Microsoft.Resources/resourceGroups', format('experiencelab-controlplane-{0}', parameters('controlPlaneName')))]"
       ]
     },
     {
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2020-10-01",
       "name": "labContainerRegistry",
-      "resourceGroup": "[format('experiencelab-controlplane-{0}', parameters('resourceGroupPrefix'))]",
+      "resourceGroup": "[format('experiencelab-controlplane-{0}', parameters('controlPlaneName'))]",
       "properties": {
         "expressionEvaluationOptions": {
           "scope": "inner"
@@ -168,7 +167,7 @@
         "mode": "Incremental",
         "parameters": {
           "location": {
-            "value": "[parameters('resourceGroupLocation')]"
+            "value": "[parameters('controlPlaneLocation')]"
           }
         },
         "template": {
@@ -178,7 +177,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.10.61.36676",
-              "templateHash": "1796470314425809952"
+              "templateHash": "12157541711598326217"
             }
           },
           "parameters": {
@@ -295,7 +294,7 @@
                     "value": "45s"
                   }
                 ],
-                "scriptContent": "      #!/bin/bash\r\n      set -e\r\n\r\n      echo \\\"Waiting on RBAC replication ${INITIAL_DELAY}\\\"\r\n      sleep ${INITIAL_DELAY}\r\n\r\n      authHeader=\"Authorization: token ${PAT}\"\r\n      echo \\\"Downloading Dockerfile: File- ${DOCKERFILE_NAME}\\\"\r\n      wget -O ${DOCKERFILE_NAME} https://github.com/microsoft/energy-data-services-experience-lab/releases/latest/download/${DOCKERFILE_NAME}\r\n\r\n      echo \\\"Downloading Container Script: File- ${CONTAINER_SCRIPT_NAME}\\\"\r\n      wget -O ${CONTAINER_SCRIPT_NAME} https://github.com/microsoft/energy-data-services-experience-lab/releases/latest/download/${CONTAINER_SCRIPT_NAME}\r\n\r\n      echo \\\"Build and Import Image: ${CONTAINER_IMAGE_NAME} into ACR: ${REGISTRY_NAME}\\\"\r\n      az acr build --image ${CONTAINER_IMAGE_NAME} \\\r\n        --registry ${REGISTRY_NAME} \\\r\n        --file ${DOCKERFILE_NAME} .\r\n    "
+                "scriptContent": "      #!/bin/bash\n      set -e\n\n      echo \\\"Waiting on RBAC replication ${INITIAL_DELAY}\\\"\n      sleep ${INITIAL_DELAY}\n\n      authHeader=\"Authorization: token ${PAT}\"\n      echo \\\"Downloading Dockerfile: File- ${DOCKERFILE_NAME}\\\"\n      wget -O ${DOCKERFILE_NAME} https://github.com/microsoft/energy-data-services-experience-lab/releases/latest/download/${DOCKERFILE_NAME}\n\n      echo \\\"Downloading Container Script: File- ${CONTAINER_SCRIPT_NAME}\\\"\n      wget -O ${CONTAINER_SCRIPT_NAME} https://github.com/microsoft/energy-data-services-experience-lab/releases/latest/download/${CONTAINER_SCRIPT_NAME}\n\n      echo \\\"Build and Import Image: ${CONTAINER_IMAGE_NAME} into ACR: ${REGISTRY_NAME}\\\"\n      az acr build --image ${CONTAINER_IMAGE_NAME} \\\n        --registry ${REGISTRY_NAME} \\\n        --file ${DOCKERFILE_NAME} .\n    "
               },
               "dependsOn": [
                 "[resourceId('Microsoft.Authorization/roleAssignments', variables('roleAssignmentName'))]",
@@ -317,14 +316,14 @@
         }
       },
       "dependsOn": [
-        "[subscriptionResourceId('Microsoft.Resources/resourceGroups', format('experiencelab-controlplane-{0}', parameters('resourceGroupPrefix')))]"
+        "[subscriptionResourceId('Microsoft.Resources/resourceGroups', format('experiencelab-controlplane-{0}', parameters('controlPlaneName')))]"
       ]
     },
     {
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2020-10-01",
       "name": "dataLoad",
-      "resourceGroup": "[format('experiencelab-controlplane-{0}', parameters('resourceGroupPrefix'))]",
+      "resourceGroup": "[format('experiencelab-controlplane-{0}', parameters('controlPlaneName'))]",
       "properties": {
         "expressionEvaluationOptions": {
           "scope": "inner"
@@ -332,19 +331,19 @@
         "mode": "Incremental",
         "parameters": {
           "storageAccountId": {
-            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, format('experiencelab-controlplane-{0}', parameters('resourceGroupPrefix'))), 'Microsoft.Resources/deployments', 'labStorage')).outputs.storageAccountId.value]"
+            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, format('experiencelab-controlplane-{0}', parameters('controlPlaneName'))), 'Microsoft.Resources/deployments', 'labStorage')).outputs.storageAccountId.value]"
           },
           "storageAccountName": {
-            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, format('experiencelab-controlplane-{0}', parameters('resourceGroupPrefix'))), 'Microsoft.Resources/deployments', 'labStorage')).outputs.storageAccountName.value]"
+            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, format('experiencelab-controlplane-{0}', parameters('controlPlaneName'))), 'Microsoft.Resources/deployments', 'labStorage')).outputs.storageAccountName.value]"
           },
           "imagePath": {
-            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, format('experiencelab-controlplane-{0}', parameters('resourceGroupPrefix'))), 'Microsoft.Resources/deployments', 'labContainerRegistry')).outputs.containerImagePath.value]"
+            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, format('experiencelab-controlplane-{0}', parameters('controlPlaneName'))), 'Microsoft.Resources/deployments', 'labContainerRegistry')).outputs.containerImagePath.value]"
           },
           "location": {
-            "value": "[parameters('resourceGroupLocation')]"
+            "value": "[parameters('controlPlaneLocation')]"
           },
           "managedIdentityId": {
-            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, format('experiencelab-controlplane-{0}', parameters('resourceGroupPrefix'))), 'Microsoft.Resources/deployments', 'labContainerRegistry')).outputs.managedIdentityId.value]"
+            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, format('experiencelab-controlplane-{0}', parameters('controlPlaneName'))), 'Microsoft.Resources/deployments', 'labContainerRegistry')).outputs.managedIdentityId.value]"
           }
         },
         "template": {
@@ -450,16 +449,16 @@
         }
       },
       "dependsOn": [
-        "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, format('experiencelab-controlplane-{0}', parameters('resourceGroupPrefix'))), 'Microsoft.Resources/deployments', 'labContainerRegistry')]",
-        "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, format('experiencelab-controlplane-{0}', parameters('resourceGroupPrefix'))), 'Microsoft.Resources/deployments', 'labStorage')]",
-        "[subscriptionResourceId('Microsoft.Resources/resourceGroups', format('experiencelab-controlplane-{0}', parameters('resourceGroupPrefix')))]"
+        "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, format('experiencelab-controlplane-{0}', parameters('controlPlaneName'))), 'Microsoft.Resources/deployments', 'labContainerRegistry')]",
+        "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, format('experiencelab-controlplane-{0}', parameters('controlPlaneName'))), 'Microsoft.Resources/deployments', 'labStorage')]",
+        "[subscriptionResourceId('Microsoft.Resources/resourceGroups', format('experiencelab-controlplane-{0}', parameters('controlPlaneName')))]"
       ]
     },
     {
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2020-10-01",
       "name": "labDeploy",
-      "resourceGroup": "[format('experiencelab-controlplane-{0}', parameters('resourceGroupPrefix'))]",
+      "resourceGroup": "[format('experiencelab-controlplane-{0}', parameters('controlPlaneName'))]",
       "properties": {
         "expressionEvaluationOptions": {
           "scope": "inner"
@@ -467,13 +466,13 @@
         "mode": "Incremental",
         "parameters": {
           "imagePath": {
-            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, format('experiencelab-controlplane-{0}', parameters('resourceGroupPrefix'))), 'Microsoft.Resources/deployments', 'labContainerRegistry')).outputs.containerImagePath.value]"
+            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, format('experiencelab-controlplane-{0}', parameters('controlPlaneName'))), 'Microsoft.Resources/deployments', 'labContainerRegistry')).outputs.containerImagePath.value]"
           },
           "location": {
-            "value": "[parameters('resourceGroupLocation')]"
+            "value": "[parameters('controlPlaneLocation')]"
           },
           "storageAccountName": {
-            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, format('experiencelab-controlplane-{0}', parameters('resourceGroupPrefix'))), 'Microsoft.Resources/deployments', 'labStorage')).outputs.storageAccountName.value]"
+            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, format('experiencelab-controlplane-{0}', parameters('controlPlaneName'))), 'Microsoft.Resources/deployments', 'labStorage')).outputs.storageAccountName.value]"
           }
         },
         "template": {
@@ -633,9 +632,9 @@
         }
       },
       "dependsOn": [
-        "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, format('experiencelab-controlplane-{0}', parameters('resourceGroupPrefix'))), 'Microsoft.Resources/deployments', 'labContainerRegistry')]",
-        "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, format('experiencelab-controlplane-{0}', parameters('resourceGroupPrefix'))), 'Microsoft.Resources/deployments', 'labStorage')]",
-        "[subscriptionResourceId('Microsoft.Resources/resourceGroups', format('experiencelab-controlplane-{0}', parameters('resourceGroupPrefix')))]"
+        "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, format('experiencelab-controlplane-{0}', parameters('controlPlaneName'))), 'Microsoft.Resources/deployments', 'labContainerRegistry')]",
+        "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, format('experiencelab-controlplane-{0}', parameters('controlPlaneName'))), 'Microsoft.Resources/deployments', 'labStorage')]",
+        "[subscriptionResourceId('Microsoft.Resources/resourceGroups', format('experiencelab-controlplane-{0}', parameters('controlPlaneName')))]"
       ]
     }
   ]
