@@ -3,16 +3,16 @@
 
 targetScope = 'subscription'
 
-@description('Resource Group Prefix')
-param resourceGroupPrefix string = 'EnergyDataServices'
+@description('Control Plane Name')
+param controlPlaneName string
 
-@description('Resource Group Location')
-param resourceGroupLocation string = 'eastus'
+@description('Control Plane Location')
+param controlPlaneLocation string = 'eastus'
 
 // Create Resource Group
 resource resourceGroup 'Microsoft.Resources/resourceGroups@2021-01-01' = {
-  name: 'experiencelab-controlplane-${resourceGroupPrefix}'
-  location: resourceGroupLocation
+  name: 'experiencelab-controlplane-${controlPlaneName}'
+  location: controlPlaneLocation
 }
 
 // Module Storage Account with Copy
@@ -20,7 +20,7 @@ module blob 'modules/lab_storage.bicep' = {
   name: 'labStorage'
   scope: resourceGroup
   params: {
-    location: resourceGroupLocation
+    location: controlPlaneLocation
   }
 }
 
@@ -28,7 +28,7 @@ module acr 'modules/lab_acr.bicep' = {
   name: 'labContainerRegistry'
   scope: resourceGroup
   params: {
-    location: resourceGroupLocation
+    location: controlPlaneLocation
   }
 }
 
@@ -39,7 +39,7 @@ module dataLoad 'modules/lab_dataload.bicep' = {
     storageAccountId: blob.outputs.storageAccountId
     storageAccountName: blob.outputs.storageAccountName
     imagePath: acr.outputs.containerImagePath
-    location: resourceGroupLocation
+    location: controlPlaneLocation
     managedIdentityId: acr.outputs.managedIdentityId
   }
 }
@@ -49,7 +49,7 @@ module deploy 'modules/lab_deploy.bicep' = {
   scope: resourceGroup
   params: {
     imagePath: acr.outputs.containerImagePath
-    location: resourceGroupLocation
+    location: controlPlaneLocation
     storageAccountName: blob.outputs.storageAccountName
   }
 }
