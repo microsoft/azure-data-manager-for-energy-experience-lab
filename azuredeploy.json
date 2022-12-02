@@ -4,8 +4,8 @@
   "metadata": {
     "_generator": {
       "name": "bicep",
-      "version": "0.10.61.36676",
-      "templateHash": "16860851905053225218"
+      "version": "0.12.40.16777",
+      "templateHash": "11678207138195136716"
     }
   },
   "parameters": {
@@ -51,8 +51,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.10.61.36676",
-              "templateHash": "7696637269887787157"
+              "version": "0.12.40.16777",
+              "templateHash": "10748180802240048297"
             }
           },
           "parameters": {
@@ -176,8 +176,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.10.61.36676",
-              "templateHash": "12157541711598326217"
+              "version": "0.12.40.16777",
+              "templateHash": "10495622094636217862"
             }
           },
           "parameters": {
@@ -248,7 +248,7 @@
               "name": "[variables('roleAssignmentName')]",
               "properties": {
                 "description": "Managed identity access for the RG",
-                "principalId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', parameters('managedIdentityName'))).principalId]",
+                "principalId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', parameters('managedIdentityName')), '2021-09-30-preview').principalId]",
                 "roleDefinitionId": "[variables('contributorRoleDefinitionId')]",
                 "principalType": "ServicePrincipal"
               },
@@ -306,7 +306,7 @@
           "outputs": {
             "containerImagePath": {
               "type": "string",
-              "value": "[format('{0}/{1}', reference(resourceId('Microsoft.ContainerRegistry/registries', parameters('acrName'))).loginServer, variables('containerImageName'))]"
+              "value": "[format('{0}/{1}', reference(resourceId('Microsoft.ContainerRegistry/registries', parameters('acrName')), '2021-06-01-preview').loginServer, variables('containerImageName'))]"
             },
             "managedIdentityId": {
               "type": "string",
@@ -331,19 +331,19 @@
         "mode": "Incremental",
         "parameters": {
           "storageAccountId": {
-            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, format('experiencelab-controlplane-{0}', parameters('controlPlaneName'))), 'Microsoft.Resources/deployments', 'labStorage')).outputs.storageAccountId.value]"
+            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, format('experiencelab-controlplane-{0}', parameters('controlPlaneName'))), 'Microsoft.Resources/deployments', 'labStorage'), '2020-10-01').outputs.storageAccountId.value]"
           },
           "storageAccountName": {
-            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, format('experiencelab-controlplane-{0}', parameters('controlPlaneName'))), 'Microsoft.Resources/deployments', 'labStorage')).outputs.storageAccountName.value]"
+            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, format('experiencelab-controlplane-{0}', parameters('controlPlaneName'))), 'Microsoft.Resources/deployments', 'labStorage'), '2020-10-01').outputs.storageAccountName.value]"
           },
           "imagePath": {
-            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, format('experiencelab-controlplane-{0}', parameters('controlPlaneName'))), 'Microsoft.Resources/deployments', 'labContainerRegistry')).outputs.containerImagePath.value]"
+            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, format('experiencelab-controlplane-{0}', parameters('controlPlaneName'))), 'Microsoft.Resources/deployments', 'labContainerRegistry'), '2020-10-01').outputs.containerImagePath.value]"
           },
           "location": {
             "value": "[parameters('controlPlaneLocation')]"
           },
           "managedIdentityId": {
-            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, format('experiencelab-controlplane-{0}', parameters('controlPlaneName'))), 'Microsoft.Resources/deployments', 'labContainerRegistry')).outputs.managedIdentityId.value]"
+            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, format('experiencelab-controlplane-{0}', parameters('controlPlaneName'))), 'Microsoft.Resources/deployments', 'labContainerRegistry'), '2020-10-01').outputs.managedIdentityId.value]"
           }
         },
         "template": {
@@ -352,8 +352,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.10.61.36676",
-              "templateHash": "12551000327581283349"
+              "version": "0.12.40.16777",
+              "templateHash": "10597848817017125989"
             }
           },
           "parameters": {
@@ -387,16 +387,24 @@
               "metadata": {
                 "description": "Resource ID for managed identity"
               }
+            },
+            "baseTime": {
+              "type": "string",
+              "defaultValue": "[utcNow('O')]",
+              "metadata": {
+                "description": "Time for calculating token expiry"
+              }
             }
           },
           "variables": {
             "tnoLoadContainerName": "tnoDataLoad",
             "cpuCores": 4,
             "memoryInGb": 16,
+            "expiryTime": "[dateTimeAdd(parameters('baseTime'), 'P6M')]",
             "accountSasProperties": {
               "signedServices": "fb",
               "signedPermission": "rwdlacup",
-              "signedExpiry": "2022-11-30T00:00:00Z",
+              "signedExpiry": "[variables('expiryTime')]",
               "signedResourceTypes": "co"
             }
           },
@@ -466,13 +474,13 @@
         "mode": "Incremental",
         "parameters": {
           "imagePath": {
-            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, format('experiencelab-controlplane-{0}', parameters('controlPlaneName'))), 'Microsoft.Resources/deployments', 'labContainerRegistry')).outputs.containerImagePath.value]"
+            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, format('experiencelab-controlplane-{0}', parameters('controlPlaneName'))), 'Microsoft.Resources/deployments', 'labContainerRegistry'), '2020-10-01').outputs.containerImagePath.value]"
           },
           "location": {
             "value": "[parameters('controlPlaneLocation')]"
           },
           "storageAccountName": {
-            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, format('experiencelab-controlplane-{0}', parameters('controlPlaneName'))), 'Microsoft.Resources/deployments', 'labStorage')).outputs.storageAccountName.value]"
+            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, format('experiencelab-controlplane-{0}', parameters('controlPlaneName'))), 'Microsoft.Resources/deployments', 'labStorage'), '2020-10-01').outputs.storageAccountName.value]"
           }
         },
         "template": {
@@ -481,8 +489,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.10.61.36676",
-              "templateHash": "12389686067977529474"
+              "version": "0.12.40.16777",
+              "templateHash": "17690483303763981211"
             }
           },
           "parameters": {
@@ -503,7 +511,17 @@
             },
             "storageAccountName": {
               "type": "string"
+            },
+            "baseTime": {
+              "type": "string",
+              "defaultValue": "[utcNow('O')]",
+              "metadata": {
+                "description": "Time for calculating token expiry"
+              }
             }
+          },
+          "variables": {
+            "expiryTime": "[dateTimeAdd(parameters('baseTime'), 'P6M')]"
           },
           "resources": [
             {
@@ -552,7 +570,7 @@
                     "accountSasProperties": {
                       "signedServices": "fb",
                       "signedPermission": "rwdlacup",
-                      "signedExpiry": "2022-11-30T00:00:00Z",
+                      "signedExpiry": "[variables('expiryTime')]",
                       "signedResourceTypes": "co"
                     }
                   },
