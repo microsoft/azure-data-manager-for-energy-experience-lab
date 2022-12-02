@@ -6,6 +6,10 @@ param templateSpecVersionName string = '0.1'
 param location string = resourceGroup().location
 param imagePath string
 param storageAccountName string
+@description('Time for calculating token expiry')
+param baseTime string = utcNow('O')
+
+var expiryTime = dateTimeAdd(baseTime, 'P6M')
 
 resource createTemplateSpec 'Microsoft.Resources/templateSpecs@2021-05-01' = {
   name: templateSpecName
@@ -51,7 +55,7 @@ resource createTemplateSpecVersion 'Microsoft.Resources/templateSpecs/versions@2
         'accountSasProperties': {
           'signedServices': 'fb'
           'signedPermission': 'rwdlacup'
-          'signedExpiry': '2022-11-30T00:00:00Z'
+          'signedExpiry': expiryTime
           'signedResourceTypes': 'co'
         }
       }

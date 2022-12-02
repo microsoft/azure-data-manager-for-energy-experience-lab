@@ -11,15 +11,18 @@ param imagePath string
 param location string = resourceGroup().location
 @description('Resource ID for managed identity')
 param managedIdentityId string
+@description('Time for calculating token expiry')
+param baseTime string = utcNow('O')
 
 var tnoLoadContainerName = 'tnoDataLoad'
 var cpuCores = 4
 var memoryInGb = 16
+var expiryTime = dateTimeAdd(baseTime, 'P6M')
 
 var accountSasProperties = {
   signedServices: 'fb'
   signedPermission: 'rwdlacup'
-  signedExpiry: '2022-11-30T00:00:00Z'
+  signedExpiry: expiryTime
   signedResourceTypes: 'co'
 }
 var sasToken = listAccountSas(storageAccountId, '2018-07-01', accountSasProperties).accountSasToken
