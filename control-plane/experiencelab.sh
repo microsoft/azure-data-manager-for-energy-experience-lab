@@ -556,10 +556,12 @@ function CreateDataPlatform() {
               --resource-type Microsoft.OpenEnergyPlatform/energyservices \
               --is-full-object \
               --properties "{ \"location\": \"${5}\", \
+                              \"identity\": null, \
                               \"properties\": { \
                                   \"authAppId\": \"${3}\", \
                                   \"dataPartitionNames\": [{ \"name\": \"${2}\" }], \
-                                  \"publicNetworkAccess\": \"Enabled\" \
+                                  \"publicNetworkAccess\": \"Enabled\", \
+                                  \"encryption\": null \
                               } \
                             }")
     echo "  Data Platform $1 created"
