@@ -555,6 +555,7 @@ function CreateDataPlatform() {
               --location $5 \
               --resource-type Microsoft.OpenEnergyPlatform/energyservices \
               --is-full-object \
+              --api-version "2022-07-21-preview" \ 
               --properties "{ \"location\": \"${5}\", \
                               \"identity\": null, \
                               \"properties\": { \
