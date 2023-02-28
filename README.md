@@ -27,7 +27,6 @@ Experience Lab is only recommended for non-production use cases. It is open sour
 ### Requirements
 
 - Experience Lab must be deployed in a region currently supported by Azure Data Manager for Energy.
-- Your subscription must be whitelisted for Azure Data Manager for Energy.
 - The default installation script for the Experience Lab control plane requires the following privileges:
   - Owner, Service Administrator, Co-Administrator, or Contributor + User Access Administrator at the subscription level.
   - Permission to register an application with your Azure AD tenant.
