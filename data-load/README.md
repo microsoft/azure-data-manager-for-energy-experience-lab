@@ -2,7 +2,7 @@
 
 ## About
 
-Experience Lab provides simple integration for performing basic data loads into a Microsoft Energy Data Services instance.
+Experience Lab provides simple integration for performing basic data loads into a Microsoft Azure Data Manager for Energy instance.
 
 ## TNO Data Set
 

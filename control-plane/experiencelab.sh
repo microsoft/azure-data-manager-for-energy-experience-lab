@@ -1145,7 +1145,7 @@ CreateOpenTestDataTemplateSpec
 $az group update -n $AZURE_GROUP --tag currentStatus=DataLoad_Completed RANDOM=$RANDOM_NUMBER CONTACT=$AZURE_USER APP_ID=$CLIENT_ID -o none  2>/dev/null
 
 #------------------------------
-#- Microsoft Energy Data Services Data Platform         --
+#- Microsoft Azure Data Manager for Energy --
 #------------------------------
 PrintBanner "Creating Data Platform"
 $az group update -n $AZURE_GROUP --tag currentStatus=Platform_Started RANDOM=$RANDOM_NUMBER CONTACT=$AZURE_USER APP_ID=$CLIENT_ID -o none  2>/dev/null

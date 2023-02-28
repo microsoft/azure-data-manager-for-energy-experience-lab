@@ -1,18 +1,18 @@
-# Experience Lab - Microsoft Energy Data Services
+# Experience Lab - Microsoft Azure Data Manager for Energy
 
 ## Build Status
 
-[![CI](https://github.com/microsoft/energy-data-services-experience-lab/actions/workflows/ci.yml/badge.svg)](https://github.com/microsoft/energy-data-services-experience-lab/actions/workflows/ci.yml)
+[![CI](https://github.com/microsoft/azure-data-manager-for-energy-experience-lab/actions/workflows/ci.yml/badge.svg)](https://github.com/microsoft/azure-data-manager-for-energy-experience-lab/actions/workflows/ci.yml)
 
 ## About
 
-Experience Lab is an automated, end-to-end deployment accelerator for Microsoft Energy Data Services that provides easy, fast deployments with sample dataset(s) for learning, testing, demo and training purposes for customers and partners.
+Experience Lab is an automated, end-to-end deployment accelerator for Microsoft Azure Data Manager for Energy that provides easy, fast deployments with sample dataset(s) for learning, testing, demo and training purposes for customers and partners.
 
-Experience Lab makes it easy to create an instance of Microsoft Energy Data Services. It includes a simple web UI to perform basic management tasks like the creation of users and legal tags, and performing data load of standard, sample data sets. It also includes integration with Power BI Desktop to perform data validation and visualization of loaded data.
+Experience Lab makes it easy to create an instance of Azure Data Manager for Energy. It includes a simple web UI to perform basic management tasks like the creation of users and legal tags, and performing data load of standard, sample data sets. It also includes integration with Power BI Desktop to perform data validation and visualization of loaded data.
 
-It therefore allows even the audience that is not deeply technical to be able to create fully configured, data-loaded instances of Microsoft Energy Data Services quickly, with ease.
+It therefore allows even the audience that is not deeply technical to be able to create fully configured, data-loaded instances of Azure Data Manager for Energy quickly, with ease.
 
-Experience Lab is only recommended for non-production use cases. It is open source, so that our customers and partners can freely use it and extend it to their bespoke use cases, including automation of deploying their own applications with Microsoft Energy Data Services.
+Experience Lab is only recommended for non-production use cases. It is open source, so that our customers and partners can freely use it and extend it to their bespoke use cases, including automation of deploying their own applications with Azure Data Manager for Energy.
 
 ### Components
 
@@ -26,8 +26,7 @@ Experience Lab is only recommended for non-production use cases. It is open sour
 
 ### Requirements
 
-- Experience Lab must be deployed in a region currently supported by Microsoft Energy Data Services.
-- Your subscription must be whitelisted for Microsoft Energy Data Services.
+- Experience Lab must be deployed in a region currently supported by Azure Data Manager for Energy.
 - The default installation script for the Experience Lab control plane requires the following privileges:
   - Owner, Service Administrator, Co-Administrator, or Contributor + User Access Administrator at the subscription level.
   - Permission to register an application with your Azure AD tenant.
@@ -36,7 +35,7 @@ Experience Lab is only recommended for non-production use cases. It is open sour
 
 Use the button below to deploy the Experience Lab Control Plane to your Azure Subscription. Further instructions are in [`/control-plane`](/control-plane)
 
-[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmicrosoft%2Fenergy-data-services-experience-lab%2Fmain%2Fazuredeploy.json)
+[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmicrosoft%2Fazure-data-manager-for-energy-experience-lab%2Fmain%2Fazuredeploy.json)
 
 ## Contributing
 

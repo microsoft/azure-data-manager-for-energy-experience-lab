@@ -4,8 +4,8 @@
   "metadata": {
     "_generator": {
       "name": "bicep",
-      "version": "0.12.40.16777",
-      "templateHash": "11678207138195136716"
+      "version": "0.14.46.61228",
+      "templateHash": "4774386579578320614"
     }
   },
   "parameters": {
@@ -51,8 +51,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.12.40.16777",
-              "templateHash": "10748180802240048297"
+              "version": "0.14.46.61228",
+              "templateHash": "3637701524263400702"
             }
           },
           "parameters": {
@@ -132,7 +132,7 @@
                     "value": "[parameters('containerName')]"
                   }
                 ],
-                "scriptContent": "      #!/bin/bash\n      set -e\n\n      echo \\\"Downloading Container Script: File- experiencelab.sh\\\"\n      wget -O experiencelab.sh https://github.com/microsoft/energy-data-services-experience-lab/releases/latest/download/experiencelab.sh\n      az storage blob upload -f experiencelab.sh -c $AZURE_STORAGE_CONTAINER -n experiencelab.sh\n\n      echo \\\"Downloading Container Script: File- template-open-test-data.json\\\"\n      wget -O template-open-test-data.json https://github.com/microsoft/energy-data-services-experience-lab/releases/latest/download/template.json\n      az storage blob upload -f template-open-test-data.json -c $AZURE_STORAGE_CONTAINER -n template-open-test-data.json\n\n      echo \\\"Downloading Container Script: File- downloadTnoData.sh\\\"\n      wget -O downloadTnoData.sh https://github.com/microsoft/energy-data-services-experience-lab/releases/latest/download/downloadTnoData.sh\n      az storage blob upload -f downloadTnoData.sh -c $AZURE_STORAGE_CONTAINER -n downloadTnoData.sh\n\n      echo \\\"Downloading Container Script: File- developer-portal.tar.gz\\\"\n      wget -O developer-portal.tar.gz https://github.com/microsoft/energy-data-services-experience-lab/releases/latest/download/developer-portal.tar.gz\n      az storage blob upload -f developer-portal.tar.gz -c $AZURE_STORAGE_CONTAINER -n developer-portal.tar.gz\n\n      echo \\\"Downloading Container Script: File- rest-scripts.zip\\\"\n      wget -O rest-scripts.zip https://github.com/microsoft/energy-data-services-experience-lab/releases/latest/download/rest-scripts.zip\n      az storage blob upload -f rest-scripts.zip -c $AZURE_STORAGE_CONTAINER -n rest-scripts.zip\n    "
+                "scriptContent": "      #!/bin/bash\n      set -e\n\n      echo \\\"Downloading Container Script: File- experiencelab.sh\\\"\n      wget -O experiencelab.sh https://github.com/microsoft/azure-data-manager-for-energy-experience-lab/releases/latest/download/experiencelab.sh\n      az storage blob upload -f experiencelab.sh -c $AZURE_STORAGE_CONTAINER -n experiencelab.sh\n\n      echo \\\"Downloading Container Script: File- template-open-test-data.json\\\"\n      wget -O template-open-test-data.json https://github.com/microsoft/azure-data-manager-for-energy-experience-lab/releases/latest/download/template.json\n      az storage blob upload -f template-open-test-data.json -c $AZURE_STORAGE_CONTAINER -n template-open-test-data.json\n\n      echo \\\"Downloading Container Script: File- downloadTnoData.sh\\\"\n      wget -O downloadTnoData.sh https://github.com/microsoft/azure-data-manager-for-energy-experience-lab/releases/latest/download/downloadTnoData.sh\n      az storage blob upload -f downloadTnoData.sh -c $AZURE_STORAGE_CONTAINER -n downloadTnoData.sh\n\n      echo \\\"Downloading Container Script: File- developer-portal.tar.gz\\\"\n      wget -O developer-portal.tar.gz https://github.com/microsoft/azure-data-manager-for-energy-experience-lab/releases/latest/download/developer-portal.tar.gz\n      az storage blob upload -f developer-portal.tar.gz -c $AZURE_STORAGE_CONTAINER -n developer-portal.tar.gz\n\n      echo \\\"Downloading Container Script: File- rest-scripts.zip\\\"\n      wget -O rest-scripts.zip https://github.com/microsoft/azure-data-manager-for-energy-experience-lab/releases/latest/download/rest-scripts.zip\n      az storage blob upload -f rest-scripts.zip -c $AZURE_STORAGE_CONTAINER -n rest-scripts.zip\n    "
               },
               "dependsOn": [
                 "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]"
@@ -176,8 +176,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.12.40.16777",
-              "templateHash": "10495622094636217862"
+              "version": "0.14.46.61228",
+              "templateHash": "9170562849043945393"
             }
           },
           "parameters": {
@@ -294,7 +294,7 @@
                     "value": "45s"
                   }
                 ],
-                "scriptContent": "      #!/bin/bash\n      set -e\n\n      echo \\\"Waiting on RBAC replication ${INITIAL_DELAY}\\\"\n      sleep ${INITIAL_DELAY}\n\n      authHeader=\"Authorization: token ${PAT}\"\n      echo \\\"Downloading Dockerfile: File- ${DOCKERFILE_NAME}\\\"\n      wget -O ${DOCKERFILE_NAME} https://github.com/microsoft/energy-data-services-experience-lab/releases/latest/download/${DOCKERFILE_NAME}\n\n      echo \\\"Downloading Container Script: File- ${CONTAINER_SCRIPT_NAME}\\\"\n      wget -O ${CONTAINER_SCRIPT_NAME} https://github.com/microsoft/energy-data-services-experience-lab/releases/latest/download/${CONTAINER_SCRIPT_NAME}\n\n      echo \\\"Build and Import Image: ${CONTAINER_IMAGE_NAME} into ACR: ${REGISTRY_NAME}\\\"\n      az acr build --image ${CONTAINER_IMAGE_NAME} \\\n        --registry ${REGISTRY_NAME} \\\n        --file ${DOCKERFILE_NAME} .\n    "
+                "scriptContent": "      #!/bin/bash\n      set -e\n\n      echo \\\"Waiting on RBAC replication ${INITIAL_DELAY}\\\"\n      sleep ${INITIAL_DELAY}\n\n      authHeader=\"Authorization: token ${PAT}\"\n      echo \\\"Downloading Dockerfile: File- ${DOCKERFILE_NAME}\\\"\n      wget -O ${DOCKERFILE_NAME} https://github.com/microsoft/azure-data-manager-for-energy-experience-lab/releases/latest/download/${DOCKERFILE_NAME}\n\n      echo \\\"Downloading Container Script: File- ${CONTAINER_SCRIPT_NAME}\\\"\n      wget -O ${CONTAINER_SCRIPT_NAME} https://github.com/microsoft/azure-data-manager-for-energy-experience-lab/releases/latest/download/${CONTAINER_SCRIPT_NAME}\n\n      echo \\\"Build and Import Image: ${CONTAINER_IMAGE_NAME} into ACR: ${REGISTRY_NAME}\\\"\n      az acr build --image ${CONTAINER_IMAGE_NAME} \\\n        --registry ${REGISTRY_NAME} \\\n        --file ${DOCKERFILE_NAME} .\n    "
               },
               "dependsOn": [
                 "[resourceId('Microsoft.Authorization/roleAssignments', variables('roleAssignmentName'))]",
@@ -352,8 +352,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.12.40.16777",
-              "templateHash": "10597848817017125989"
+              "version": "0.14.46.61228",
+              "templateHash": "11657680219120702527"
             }
           },
           "parameters": {
@@ -489,8 +489,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.12.40.16777",
-              "templateHash": "17690483303763981211"
+              "version": "0.14.46.61228",
+              "templateHash": "5101310412035075093"
             }
           },
           "parameters": {
@@ -530,8 +530,8 @@
               "name": "[parameters('templateSpecName')]",
               "location": "[parameters('location')]",
               "properties": {
-                "description": "Deploys a Microsoft Energy Data Services instance paired with Experience Lab.",
-                "displayName": "Microsoft Energy Data Services + Experience Lab"
+                "description": "Deploys a Microsoft Azure Data Manager for Energy instance paired with Experience Lab.",
+                "displayName": "Microsoft Azure Data Manager for Energy + Experience Lab"
               }
             },
             {
