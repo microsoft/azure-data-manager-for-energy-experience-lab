@@ -2,14 +2,14 @@
 
 ## About
 
-The developer portal is a getting started Angular website that includes instructions for calling Microsoft Energy Data Services APIs, functions for retrieving Authorization tokens, sample Power BI integration, basic user management, and more. It can be created from a control plane or run locally against an existing service instance.
+The developer portal is a getting started Angular website that includes instructions for calling Microsoft Azure Data Manager for Energy APIs, functions for retrieving Authorization tokens, sample Power BI integration, basic user management, and more. It can be created from a control plane or run locally against an existing service instance.
 
 ## Run via Local Machine
 
 ### Requirements
 
 1. [Docker](https://docs.docker.com/desktop/windows/install/) installed and running on local machine.
-1. A Microsoft Energy Data Services instance.
+1. An Azure Data Manager for Energy instance.
 1. An AAD application that's been properly configured with the service instance.
 
 ### Configure the AAD App redirect URL
@@ -29,7 +29,7 @@ Create an environment variable file at `src\environments\environment.ts` in the 
 export const environment = {
   tenantId: "00000000-0000-0000-0000-000000000000", // Your AAD tenant's ID
   clientId: "00000000-0000-0000-0000-000000000000", // Your AAD app's client ID
-  apiHost: "platform0000.energy.azure.com", // Your Microsoft Energy Data Services instance's endpoint
+  apiHost: "platform0000.energy.azure.com", // Your Azure Data Manager for Energy instance's endpoint
   dataPartition: "platform0000-opendes",
   scopes: ".default openid profile offline_access",
   redirectUrl: "http://localhost:80",
@@ -47,7 +47,7 @@ Add the following to the bottom of the swagger.yml file:
 
 ```yaml
 servers:
-  - url: https://<your Microsoft Energy Data Services instance name>.energy.azure.com
+  - url: https://<your Azure Data Manager for Energy instance name>.energy.azure.com
 ```
 
 You will also need to update the data partition names by replacing all instances of `opendes` with your actual data partition

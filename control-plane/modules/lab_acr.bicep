@@ -98,10 +98,10 @@ resource acrDockerImage 'Microsoft.Resources/deploymentScripts@2020-10-01' = {
 
       authHeader="Authorization: token ${PAT}"
       echo \"Downloading Dockerfile: File- ${DOCKERFILE_NAME}\"
-      wget -O ${DOCKERFILE_NAME} https://github.com/microsoft/energy-data-services-experience-lab/releases/latest/download/${DOCKERFILE_NAME}
+      wget -O ${DOCKERFILE_NAME} https://github.com/microsoft/azure-data-manager-for-energy-experience-lab/releases/latest/download/${DOCKERFILE_NAME}
 
       echo \"Downloading Container Script: File- ${CONTAINER_SCRIPT_NAME}\"
-      wget -O ${CONTAINER_SCRIPT_NAME} https://github.com/microsoft/energy-data-services-experience-lab/releases/latest/download/${CONTAINER_SCRIPT_NAME}
+      wget -O ${CONTAINER_SCRIPT_NAME} https://github.com/microsoft/azure-data-manager-for-energy-experience-lab/releases/latest/download/${CONTAINER_SCRIPT_NAME}
 
       echo \"Build and Import Image: ${CONTAINER_IMAGE_NAME} into ACR: ${REGISTRY_NAME}\"
       az acr build --image ${CONTAINER_IMAGE_NAME} \

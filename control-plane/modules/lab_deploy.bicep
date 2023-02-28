@@ -15,8 +15,8 @@ resource createTemplateSpec 'Microsoft.Resources/templateSpecs@2021-05-01' = {
   name: templateSpecName
   location: location
   properties: {
-    description: 'Deploys a Microsoft Energy Data Services instance paired with Experience Lab.'
-    displayName: 'Microsoft Energy Data Services + Experience Lab'
+    description: 'Deploys a Microsoft Azure Data Manager for Energy instance paired with Experience Lab.'
+    displayName: 'Microsoft Azure Data Manager for Energy + Experience Lab'
   }
 }
 
