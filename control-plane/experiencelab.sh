@@ -846,7 +846,7 @@ function GetPortal() {
     instanceIdentifier: \"${RANDOM_NUMBER}\",
     instanceName: \"${3}\",
     domain: \"dataservices.energy\",
-    buildNumber: \"v0.6\",
+    buildNumber: \"#{Build.BuildNumber}#\",
     powerBiConnectorFileName: \"${6}\",
     tnoTemplateSpecUrl: \"https://portal.azure.com/#@microsoft.onmicrosoft.com/resource/subscriptions/${subId}/resourceGroups/${AZURE_GROUP}/providers/Microsoft.Resources/templateSpecs/${TNO_TEMPLATE_NAME}/overview\"
   };
