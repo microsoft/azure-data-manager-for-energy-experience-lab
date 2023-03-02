@@ -541,6 +541,7 @@ function CreateDataPlatform() {
   Verify $3 'CreateDataPlatform-ERROR: Argument (CLIENT_ID) not received'
   Verify $4 'CreateDataPlatform-ERROR: Argument (RESOURCE_GROUP) not received'
   Verify $5 'CreateDataPlatform-ERROR: Argument (LOCATION) not received'
+  local _version="2022-07-21-preview"
 
   local _platform=$(az resource show \
                       --name $1 \
@@ -553,9 +554,9 @@ function CreateDataPlatform() {
               --name $1 \
               --resource-group $4 \
               --location $5 \
+              --api-version $_version \
               --resource-type Microsoft.OpenEnergyPlatform/energyservices \
               --is-full-object \
-              --api-version "2022-07-21-preview" \ 
               --properties "{ \"location\": \"${5}\", \
                               \"identity\": null, \
                               \"properties\": { \
