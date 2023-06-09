@@ -24,6 +24,8 @@ Experience Lab is only recommended for non-production use cases. It is open sour
 
 ## Installing and running Experience Lab
 
+> :warning: **Lock Resource Group Level**: Experience Lab set lock at the resource group (RG) level. The lock must be removed before deleting any resource in the RG!
+
 ### Requirements
 
 - Experience Lab must be deployed in a region currently supported by Azure Data Manager for Energy.
