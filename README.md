@@ -24,7 +24,7 @@ Experience Lab is only recommended for non-production use cases. It is open sour
 
 ## Installing and running Experience Lab
 
-> :warning: **Lock Resource Group Level**: Experience Lab set lock at the resource group (RG) level. The lock must be removed before deleting any resource in the RG!
+> :warning: **Lock Resource Group Level**: Experience Lab set lock at the resource group (RG) level. The lock must be removed before deleting any resource in the RG! If a resource delete attempt fails due to not first removing the lock at the RG level, the resources will be considered active and billable until the resources are successfully deleted.
 
 ### Requirements
 
