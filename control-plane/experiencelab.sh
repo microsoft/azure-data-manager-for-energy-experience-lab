@@ -201,12 +201,6 @@ function CreateResourceGroup() {
         --tags currentStatus=Group_Created RANDOM=$RANDOM_NUMBER CONTACT=$AZURE_USER \
         -ojsonc)
       echo "  Resource Group Created."
-
-      LOCK=$($az group lock create --name "PROTECTED" \
-        --resource-group $1 \
-        --lock-type CanNotDelete \
-        -ojsonc)
-      echo "  Resource Group Locked."
     else
       echo "  Resource Group $1 already exists."
       RANDOM_NUMBER=$($az group show --name $1 --query tags.RANDOM -otsv)
