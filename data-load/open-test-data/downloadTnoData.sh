@@ -21,8 +21,8 @@ function GetOpenTestDataSetAndUploadToFileShare() {
   TEMP_DATA_DIR="osduTnoData"
 
   echo "  Downloading M12 Open Test Data (TNO) from OSDU"
-  wget --quiet -O $OPEN_TEST_DATA_ARCHIVE_FILE_NAME https://community.opengroup.org/osdu/platform/data-flow/data-loading/open-test-data/-/archive/Azure/M12-tno-loading-pipelines/open-test-data-Azure-M12-tno-loading-pipelines.tar.gz
-  
+  wget --quiet -O $OPEN_TEST_DATA_ARCHIVE_FILE_NAME https://community.opengroup.org/osdu/platform/data-flow/data-loading/open-test-data/-/archive/v0.17.0/open-test-data-v0.17.0.tar.gz
+
   echo "  Creating Open Test Data (TNO) directory structure"
   mkdir -p $TEMP_DATA_DIR/datasets/documents
   mkdir -p $TEMP_DATA_DIR/datasets/markers
@@ -34,28 +34,28 @@ function GetOpenTestDataSetAndUploadToFileShare() {
   mkdir -p $TEMP_DATA_DIR/TNO/provided
 
   echo "  Extracting Dataset Documents"
-  tar -xzf $OPEN_TEST_DATA_ARCHIVE_FILE_NAME -C $TEMP_DATA_DIR/datasets/documents --strip-components=5 open-test-data-Azure-M12-tno-loading-pipelines/rc--1.0.0/1-data/3-provided/USGS_docs
+  tar -xzf $OPEN_TEST_DATA_ARCHIVE_FILE_NAME -C $TEMP_DATA_DIR/datasets/documents --strip-components=5 open-test-data-v0.17.0/rc--1.0.0/1-data/3-provided/USGS_docs
 
   echo "  Extracting Dataset Markers"
-  tar -xzf $OPEN_TEST_DATA_ARCHIVE_FILE_NAME -C $TEMP_DATA_DIR/datasets/markers --strip-components=5 open-test-data-Azure-M12-tno-loading-pipelines/rc--1.0.0/1-data/3-provided/markers
+  tar -xzf $OPEN_TEST_DATA_ARCHIVE_FILE_NAME -C $TEMP_DATA_DIR/datasets/markers --strip-components=5 open-test-data-v0.17.0/rc--1.0.0/1-data/3-provided/markers
 
   echo "  Extracting Dataset Trajectories"
-  tar -xzf $OPEN_TEST_DATA_ARCHIVE_FILE_NAME -C $TEMP_DATA_DIR/datasets/trajectories --strip-components=5 open-test-data-Azure-M12-tno-loading-pipelines/rc--1.0.0/1-data/3-provided/trajectories
+  tar -xzf $OPEN_TEST_DATA_ARCHIVE_FILE_NAME -C $TEMP_DATA_DIR/datasets/trajectories --strip-components=5 open-test-data-v0.17.0/rc--1.0.0/1-data/3-provided/trajectories
 
   echo "  Extracting Dataset Well Logs"
-  tar -xzf $OPEN_TEST_DATA_ARCHIVE_FILE_NAME -C $TEMP_DATA_DIR/datasets/well-logs --strip-components=5 open-test-data-Azure-M12-tno-loading-pipelines/rc--1.0.0/1-data/3-provided/well-logs
+  tar -xzf $OPEN_TEST_DATA_ARCHIVE_FILE_NAME -C $TEMP_DATA_DIR/datasets/well-logs --strip-components=5 open-test-data-v0.17.0/rc--1.0.0/1-data/3-provided/well-logs
 
   echo "  Extracting Schemas"
-  tar -xzf $OPEN_TEST_DATA_ARCHIVE_FILE_NAME -C $TEMP_DATA_DIR/schema --strip-components=3 open-test-data-Azure-M12-tno-loading-pipelines/rc--3.0.0/3-schema
+  tar -xzf $OPEN_TEST_DATA_ARCHIVE_FILE_NAME -C $TEMP_DATA_DIR/schema --strip-components=3 open-test-data-v0.17.0/rc--3.0.0/3-schema
 
   echo "  Extracting Templates"
-  tar -xzf $OPEN_TEST_DATA_ARCHIVE_FILE_NAME -C $TEMP_DATA_DIR/templates --strip-components=3 open-test-data-Azure-M12-tno-loading-pipelines/rc--3.0.0/5-templates
+  tar -xzf $OPEN_TEST_DATA_ARCHIVE_FILE_NAME -C $TEMP_DATA_DIR/templates --strip-components=3 open-test-data-v0.17.0/rc--3.0.0/5-templates
 
   echo "  Extracting TNO Contrib"
-  tar -xzf $OPEN_TEST_DATA_ARCHIVE_FILE_NAME -C $TEMP_DATA_DIR/TNO/contrib --strip-components=5 open-test-data-Azure-M12-tno-loading-pipelines/rc--3.0.0/1-data/3-provided/TNO
+  tar -xzf $OPEN_TEST_DATA_ARCHIVE_FILE_NAME -C $TEMP_DATA_DIR/TNO/contrib --strip-components=5 open-test-data-v0.17.0/rc--3.0.0/1-data/3-provided/TNO
 
   echo "  Extracting TNO Provided"
-  tar -xzf $OPEN_TEST_DATA_ARCHIVE_FILE_NAME -C $TEMP_DATA_DIR/TNO/provided --strip-components=3 open-test-data-Azure-M12-tno-loading-pipelines/rc--3.0.0/4-instances/TNO
+  tar -xzf $OPEN_TEST_DATA_ARCHIVE_FILE_NAME -C $TEMP_DATA_DIR/TNO/provided --strip-components=3 open-test-data-v0.17.0/rc--3.0.0/4-instances/TNO
   
   echo "  Creating Share"
   az storage share create --name $OPEN_TEST_DATA_SHARE_NAME --account-name $CONTROL_PLANE_STORAGE --account-key $STORAGE_ACCOUNT_KEY --only-show-errors --output none
