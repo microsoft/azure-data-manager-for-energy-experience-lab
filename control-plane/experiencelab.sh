@@ -535,7 +535,7 @@ function CreateDataPlatform() {
   Verify $3 'CreateDataPlatform-ERROR: Argument (CLIENT_ID) not received'
   Verify $4 'CreateDataPlatform-ERROR: Argument (RESOURCE_GROUP) not received'
   Verify $5 'CreateDataPlatform-ERROR: Argument (LOCATION) not received'
-  local _version="2022-07-21-preview"
+  local _version="2023-02-21-preview"
 
   local _platform=$(az resource show \
                       --name $1 \
@@ -557,6 +557,7 @@ function CreateDataPlatform() {
                                   \"authAppId\": \"${3}\", \
                                   \"dataPartitionNames\": [{ \"name\": \"${2}\" }], \
                                   \"publicNetworkAccess\": \"Enabled\", \
+                                  \"sku\": {\"name\":\"Developer\"}, \
                                   \"encryption\": null \
                               } \
                             }")

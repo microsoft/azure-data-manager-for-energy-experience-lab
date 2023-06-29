@@ -8,7 +8,7 @@
 
 Experience Lab is an automated, end-to-end deployment accelerator for Microsoft Azure Data Manager for Energy that provides easy, fast deployments with sample dataset(s) for learning, testing, demo and training purposes for customers and partners.
 
-Experience Lab makes it easy to create an instance of Azure Data Manager for Energy. It includes a simple web UI to perform basic management tasks like the creation of users and legal tags, and performing data load of standard, sample data sets. It also includes integration with Power BI Desktop to perform data validation and visualization of loaded data.
+Experience Lab makes it easy to create a Developer Tier instance of Azure Data Manager for Energy. It includes a simple web UI to perform basic management tasks like the creation of users and legal tags, and performing data load of standard, sample data sets. It also includes integration with Power BI Desktop to perform data validation and visualization of loaded data.
 
 It therefore allows even the audience that is not deeply technical to be able to create fully configured, data-loaded instances of Azure Data Manager for Energy quickly, with ease.
 
