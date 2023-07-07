@@ -489,11 +489,11 @@ function GetOpenTestDataLoaderAndUploadToAzureContainerRegistry() {
     --registry $ITEM_NAME \
     --build-arg AZURE_TENANT=$AZURE_TENANT \
     --build-arg OSDU_ENDPOINT="https://${PLATFORM_NAME}.energy.azure.com" \
-    --build-arg DATA_PARTITION="${PLATFORM_NAME}-${DATA_PARTITION}" \
+    --build-arg DATA_PARTITION="${DATA_PARTITION}" \
     --build-arg ACL_VIEWER=$OPEN_TEST_DATA_VIEWER_ACL \
     --build-arg ACL_OWNER=$OPEN_TEST_DATA_OWNER_ACL \
     --build-arg DOMAIN="dataservices.energy" \
-    --build-arg LEGAL_TAG="${PLATFORM_NAME}-${DATA_PARTITION}-$FIRST_LEGAL_TAG_NAME" \
+    --build-arg LEGAL_TAG="${DATA_PARTITION}-$FIRST_LEGAL_TAG_NAME" \
     --file ${DATA_LOADER_DIR}/Dockerfile \
     --image $IMAGE_NAME:$TAG $DATA_LOADER_DIR \
     --no-logs \
@@ -835,7 +835,7 @@ function GetPortal() {
     tenantId: \"${1}\",
     clientId: \"${2}\",
     apiHost: \"platform${RANDOM_NUMBER}.energy.azure.com\",
-    dataPartition: \"platform${RANDOM_NUMBER}-${4}\",
+    dataPartition: \"${4}\",
     scopes: \".default openid profile offline_access\",
     redirectUrl: \"https://${3}.azurewebsites.net\",
     instanceIdentifier: \"${RANDOM_NUMBER}\",
@@ -850,7 +850,7 @@ function GetPortal() {
 
   PrintStage "Update swagger with instance information"
   echo -e "\nservers:\n  - url: https://platform${RANDOM_NUMBER}.energy.azure.com" >> developer-portal/src/assets/swagger.yaml
-  sed -i "s/opendes/platform${RANDOM_NUMBER}-${4}/g" developer-portal/src/assets/swagger.yaml
+  sed -i "s/opendes/${4}/g" developer-portal/src/assets/swagger.yaml
 
   # Copy REST scripts file from blob storage to site assets folder
   local _rest_sas=$(GetDeploymentBlobSASToken $DEPLOYMENT_BLOB_REST_SCRIPTS $_connection)
@@ -973,7 +973,7 @@ function CreatePowerBiConnector() {
     \"redirect_uri\": \"${5}\",
     \"oauth_base_url\": \"https://login.microsoftonline.com/${2}/oauth2/v2.0\",
     \"osduindexsearchendpoint\": \"https://platform${RANDOM_NUMBER}.energy.azure.com/api/search/v2/query\",
-    \"data_partition_id\": \"platform${RANDOM_NUMBER}-${3}\"
+    \"data_partition_id\": \"${3}\"
   }" > config.json
 
   # Rename the connector from the generic community one to the customized one
@@ -1147,10 +1147,10 @@ $az group update -n $AZURE_GROUP --tag currentStatus=DataLoad_Completed RANDOM=$
 PrintBanner "Creating Data Platform"
 $az group update -n $AZURE_GROUP --tag currentStatus=Platform_Started RANDOM=$RANDOM_NUMBER CONTACT=$AZURE_USER APP_ID=$CLIENT_ID -o none  2>/dev/null
 CreateDataPlatform $PLATFORM_NAME $DATA_PARTITION $CLIENT_ID $AZURE_GROUP $AZURE_LOCATION
-CreateFirstUser $PLATFORM_NAME $AZURE_TENANT $CLIENT_ID $CLIENT_SECRET "${PLATFORM_NAME}-${DATA_PARTITION}" $FIRST_USER
-CreateFirstTag $PLATFORM_NAME $AZURE_TENANT $CLIENT_ID $CLIENT_SECRET "${PLATFORM_NAME}-${DATA_PARTITION}" $FIRST_LEGAL_TAG_NAME
-CreateDataGroup $PLATFORM_NAME $AZURE_TENANT $CLIENT_ID $CLIENT_SECRET "${PLATFORM_NAME}-${DATA_PARTITION}" $FIRST_USER $OPEN_TEST_DATA_VIEWER_ACL "Viewer group for Open Test Data (TNO)"
-CreateDataGroup $PLATFORM_NAME $AZURE_TENANT $CLIENT_ID $CLIENT_SECRET "${PLATFORM_NAME}-${DATA_PARTITION}" $FIRST_USER $OPEN_TEST_DATA_OWNER_ACL "Owners group for Open Test Data (TNO)"
+CreateFirstUser $PLATFORM_NAME $AZURE_TENANT $CLIENT_ID $CLIENT_SECRET $DATA_PARTITION $FIRST_USER
+CreateFirstTag $PLATFORM_NAME $AZURE_TENANT $CLIENT_ID $CLIENT_SECRET $DATA_PARTITION $FIRST_LEGAL_TAG_NAME
+CreateDataGroup $PLATFORM_NAME $AZURE_TENANT $CLIENT_ID $CLIENT_SECRET $DATA_PARTITION $FIRST_USER $OPEN_TEST_DATA_VIEWER_ACL "Viewer group for Open Test Data - TNO"
+CreateDataGroup $PLATFORM_NAME $AZURE_TENANT $CLIENT_ID $CLIENT_SECRET $DATA_PARTITION $FIRST_USER $OPEN_TEST_DATA_OWNER_ACL "Owners group for Open Test Data - TNO"
 $az group update -n $AZURE_GROUP --tag currentStatus=Platform_Completed RANDOM=$RANDOM_NUMBER CONTACT=$AZURE_USER APP_ID=$CLIENT_ID -o none  2>/dev/null
 
 #------------------------------

@@ -30,7 +30,7 @@ export const environment = {
   tenantId: "00000000-0000-0000-0000-000000000000", // Your AAD tenant's ID
   clientId: "00000000-0000-0000-0000-000000000000", // Your AAD app's client ID
   apiHost: "platform0000.energy.azure.com", // Your Azure Data Manager for Energy instance's endpoint
-  dataPartition: "platform0000-opendes",
+  dataPartition: "opendes",
   scopes: ".default openid profile offline_access",
   redirectUrl: "http://localhost:80",
   instanceName: "platform0000",
@@ -50,7 +50,7 @@ servers:
   - url: https://<your Azure Data Manager for Energy instance name>.energy.azure.com
 ```
 
-You will also need to update the data partition names by replacing all instances of `opendes` with your actual data partition
+You will also need to update the data partition names by replacing all instances of `opendes` with your actual data partition, if using a different data partition name.
 
 ### Run the Site with Docker
 
