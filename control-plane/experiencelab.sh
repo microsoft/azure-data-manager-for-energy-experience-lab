@@ -562,6 +562,9 @@ function CreateDataPlatform() {
                               } \
                             }")
     echo "  Data Platform $1 created"
+
+    echo "  Waiting 10 min for the instance to come up"
+    sleep 600
   else
     echo "  Data Platform $1 already exists"
   fi
