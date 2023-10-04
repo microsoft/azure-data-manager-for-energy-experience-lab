@@ -562,6 +562,9 @@ function CreateDataPlatform() {
                               } \
                             }")
     echo "  Data Platform $1 created"
+
+    echo "  Waiting 10 min for the instance to come up"
+    sleep 600
   else
     echo "  Data Platform $1 already exists"
   fi
@@ -581,9 +584,6 @@ function CreateFirstUser() {
   Verify $4 'CreateFirstUser-ERROR: Argument (CLIENT_SECRET) not received'
   Verify $5 'CreateFirstUser-ERROR: Argument (DATA_PARTITION) not received'
   Verify $6 'CreateFirstUser-ERROR: Argument (FIRST_USER) not received'
-
-  echo "  Waiting 10 min for the instance to come up"
-  sleep 600
 
   ACCESS_TOKEN=$(curl \
       --request POST \
