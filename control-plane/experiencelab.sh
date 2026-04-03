@@ -472,37 +472,39 @@ function GetContainerRegistryId() {
   echo ${_result}
 }
 
-function GetOpenTestDataLoaderAndUploadToAzureContainerRegistry() {
-  echo "  Downloading Open Test Data Loader Source from GitHub"
-  LOADER_FILE_NAME=main.zip
-  DATA_LOADER_DIR="osdu-data-load-tno-main"
-  wget --quiet -O $LOADER_FILE_NAME https://github.com/Azure/osdu-data-load-tno/archive/refs/heads/$LOADER_FILE_NAME
-  
-  echo "  Extracting Open Test Data Loader"
-  unzip -qq $LOADER_FILE_NAME -d .
-  
-  echo $'\n  Building open-test-data and uploading to Azure Container Registry'
-  IMAGE_NAME="open-test-data"
-  TAG="latest"
+function StoreDataLoadConfig() {
+  echo "  Storing data load configuration in Key Vault"
+  AddKeyToVault $AZURE_VAULT "osdu-endpoint" "https://${PLATFORM_NAME}.energy.azure.com"
+  AddKeyToVault $AZURE_VAULT "azure-tenant" "$AZURE_TENANT"
+  AddKeyToVault $AZURE_VAULT "data-partition" "$DATA_PARTITION"
+  AddKeyToVault $AZURE_VAULT "legal-tag" "${DATA_PARTITION}-${FIRST_LEGAL_TAG_NAME}"
+  AddKeyToVault $AZURE_VAULT "acl-viewer" "${OPEN_TEST_DATA_VIEWER_ACL}@${DATA_PARTITION}.dataservices.energy"
+  AddKeyToVault $AZURE_VAULT "acl-owner" "${OPEN_TEST_DATA_OWNER_ACL}@${DATA_PARTITION}.dataservices.energy"
+  echo "  Data load configuration stored in Key Vault"
+}
 
+function BuildDataLoadImage() {
+  echo "  Downloading data loader assets from control plane storage"
+  local _connection=$(GetStorageConnection $CONTROL_PLANE_STORAGE $CONTROL_PLANE_GROUP $DEPLOYMENT_SUBSCRIPTION)
+
+  local _dockerfile_sas=$(GetDeploymentBlobSASToken $DEPLOYMENT_BLOB_DOCKERFILE $_connection)
+  local _dockerfile_url="https://$CONTROL_PLANE_STORAGE.blob.core.windows.net/$DEPLOYMENT_CONTAINER/$DEPLOYMENT_BLOB_DOCKERFILE?$_dockerfile_sas"
+  wget --quiet -O Dockerfile "$_dockerfile_url"
+
+  local _loader_sas=$(GetDeploymentBlobSASToken "loader.py" $_connection)
+  local _loader_url="https://$CONTROL_PLANE_STORAGE.blob.core.windows.net/$DEPLOYMENT_CONTAINER/loader.py?$_loader_sas"
+  wget --quiet -O loader.py "$_loader_url"
+
+  echo "  Building open-test-data image in instance ACR"
   $az acr build \
     --registry $ITEM_NAME \
-    --build-arg AZURE_TENANT=$AZURE_TENANT \
-    --build-arg OSDU_ENDPOINT="https://${PLATFORM_NAME}.energy.azure.com" \
-    --build-arg DATA_PARTITION="${DATA_PARTITION}" \
-    --build-arg ACL_VIEWER=$OPEN_TEST_DATA_VIEWER_ACL \
-    --build-arg ACL_OWNER=$OPEN_TEST_DATA_OWNER_ACL \
-    --build-arg DOMAIN="dataservices.energy" \
-    --build-arg LEGAL_TAG="${DATA_PARTITION}-$FIRST_LEGAL_TAG_NAME" \
-    --file ${DATA_LOADER_DIR}/Dockerfile \
-    --image $IMAGE_NAME:$TAG $DATA_LOADER_DIR \
+    --file Dockerfile \
+    --image open-test-data:latest . \
     --no-logs \
     --only-show-errors
-  
-  rm -rf $DATA_LOADER_DIR
-  rm -rf $LOADER_FILE_NAME
-  printf "\n"
-  echo '  Completed open-test-data build and upload to ACR'
+
+  rm -f Dockerfile loader.py
+  echo "  Completed open-test-data image build"
 }
 
 function CreateOpenTestDataTemplateSpec() {
@@ -1137,8 +1139,11 @@ CLIENT_SECRET=$($az keyvault secret show --id https://$AZURE_VAULT.vault.azure.n
 PrintBanner "Creating Open Test Data (TNO) Data Loader"
 $az group update -n $AZURE_GROUP --tag currentStatus=DataLoad_Started RANDOM=$RANDOM_NUMBER CONTACT=$AZURE_USER APP_ID=$CLIENT_ID -o none  2>/dev/null
 
-PrintStage "Downloading Open Test Data (TNO) Data Loader and Building Docker Image in Azure Container Registry"
-GetOpenTestDataLoaderAndUploadToAzureContainerRegistry
+PrintStage "Building Data Load Image in Instance ACR"
+BuildDataLoadImage
+
+PrintStage "Storing Data Load Configuration in Key Vault"
+StoreDataLoadConfig
 
 PrintStage "Creating Open Test Data (TNO) Deployment Template"
 CreateOpenTestDataTemplateSpec
