@@ -238,7 +238,7 @@ EOF
 
       CLIENT_ID=$($az ad app create \
         --display-name $1 \
-        --available-to-other-tenants false \
+        --sign-in-audience AzureADMyOrg \
         --required-resource-accesses "@manifest.json" \
         --query appId -otsv)
 
