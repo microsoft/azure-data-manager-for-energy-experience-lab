@@ -1,7 +1,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-FROM mcr.microsoft.com/mirror/docker/library/node:16 as build
+FROM mcr.microsoft.com/mirror/docker/library/node:18 as build
 
 WORKDIR /app
 
