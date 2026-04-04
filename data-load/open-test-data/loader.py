@@ -208,29 +208,47 @@ def submit_records(cfg: dict, records: list[dict]) -> tuple[int, int, list[str]]
     if len(deduped) < len(records):
         log.info("Deduplicated %d -> %d records", len(records), len(deduped))
 
-    num_batches = (len(deduped) + STORAGE_BATCH_SIZE - 1) // STORAGE_BATCH_SIZE
-    for i in range(0, len(deduped), STORAGE_BATCH_SIZE):
-        batch = deduped[i:i + STORAGE_BATCH_SIZE]
+    # Separate dot-ending IDs from non-dot IDs (cannot be mixed in same request)
+    dot_records = [r for r in deduped if str(r.get("id", "")).endswith(".")]
+    non_dot_records = [r for r in deduped if not str(r.get("id", "")).endswith(".")]
+    ordered = non_dot_records + dot_records
+
+    num_batches = (len(ordered) + STORAGE_BATCH_SIZE - 1) // STORAGE_BATCH_SIZE
+    for i in range(0, len(ordered), STORAGE_BATCH_SIZE):
+        batch = ordered[i:i + STORAGE_BATCH_SIZE]
         batch_num = i // STORAGE_BATCH_SIZE + 1
-        try:
-            resp = requests.put(url, json=batch, headers=api_headers(cfg), timeout=120)
-            if resp.status_code in (200, 201):
-                count = resp.json().get("recordCount", len(batch))
-                total_ok += count
-                log.info("Batch %d/%d: %d records stored", batch_num, num_batches, count)
-            elif resp.status_code == 409:
-                total_ok += len(batch)
-                log.info("Batch %d/%d: %d records (already exist)", batch_num, num_batches, len(batch))
-            else:
-                total_fail += len(batch)
-                msg = f"Batch {batch_num}/{num_batches}: HTTP {resp.status_code}: {resp.text[:300]}"
+
+        # Split if a batch straddles the dot/non-dot boundary
+        has_dot = any(str(r.get("id", "")).endswith(".") for r in batch)
+        has_non_dot = any(not str(r.get("id", "")).endswith(".") for r in batch)
+        if has_dot and has_non_dot:
+            split_idx = next(j for j, r in enumerate(batch) if str(r.get("id", "")).endswith("."))
+            sub_batches = [batch[:split_idx], batch[split_idx:]]
+        else:
+            sub_batches = [batch]
+
+        for sub_batch in sub_batches:
+            if not sub_batch:
+                continue
+            try:
+                resp = requests.put(url, json=sub_batch, headers=api_headers(cfg), timeout=120)
+                if resp.status_code in (200, 201):
+                    count = resp.json().get("recordCount", len(sub_batch))
+                    total_ok += count
+                    log.info("Batch %d/%d: %d records stored", batch_num, num_batches, count)
+                elif resp.status_code == 409:
+                    total_ok += len(sub_batch)
+                    log.info("Batch %d/%d: %d records (already exist)", batch_num, num_batches, len(sub_batch))
+                else:
+                    total_fail += len(sub_batch)
+                    msg = f"Batch {batch_num}/{num_batches}: HTTP {resp.status_code}: {resp.text[:300]}"
+                    errors.append(msg)
+                    log.error(msg)
+            except Exception as e:
+                total_fail += len(sub_batch)
+                msg = f"Batch {batch_num}/{num_batches}: {e}"
                 errors.append(msg)
                 log.error(msg)
-        except Exception as e:
-            total_fail += len(batch)
-            msg = f"Batch {batch_num}/{num_batches}: {e}"
-            errors.append(msg)
-            log.error(msg)
 
     return total_ok, total_fail, errors
 
