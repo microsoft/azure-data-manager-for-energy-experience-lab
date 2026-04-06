@@ -74,6 +74,14 @@ resource blobDeploymentScript 'Microsoft.Resources/deploymentScripts@2020-10-01'
       echo \"Downloading Container Script: File- rest-scripts.zip\"
       wget -O rest-scripts.zip https://github.com/microsoft/azure-data-manager-for-energy-experience-lab/releases/latest/download/rest-scripts.zip
       az storage blob upload -f rest-scripts.zip -c $AZURE_STORAGE_CONTAINER -n rest-scripts.zip
+
+      echo \"Downloading Data Load Dockerfile: File- Dockerfile-open-test-data\"
+      wget -O Dockerfile-open-test-data https://github.com/microsoft/azure-data-manager-for-energy-experience-lab/releases/latest/download/Dockerfile-open-test-data
+      az storage blob upload -f Dockerfile-open-test-data -c $AZURE_STORAGE_CONTAINER -n Dockerfile-open-test-data
+
+      echo \"Downloading Data Load Script: File- loader.py\"
+      wget -O loader.py https://github.com/microsoft/azure-data-manager-for-energy-experience-lab/releases/latest/download/loader.py
+      az storage blob upload -f loader.py -c $AZURE_STORAGE_CONTAINER -n loader.py
     '''
   }
 }
