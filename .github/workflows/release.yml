@@ -35,6 +35,9 @@ jobs:
           bicepFilePath: ./control-plane/main.bicep
           outputFilePath: ./azuredeploy.json
 
+      - name: Copy data load Dockerfile with release name
+        run: cp data-load/open-test-data/Dockerfile Dockerfile-open-test-data
+
       - name: Upload artifacts to release
         uses: softprops/action-gh-release@v1
         with:
@@ -45,6 +48,8 @@ jobs:
             azuredeploy.json
             data-load/open-test-data/downloadTnoData.sh
             data-load/open-test-data/template.json
+            data-load/open-test-data/loader.py
+            Dockerfile-open-test-data
             control-plane/Dockerfile
             control-plane/containerRun.sh
             control-plane/experiencelab.sh

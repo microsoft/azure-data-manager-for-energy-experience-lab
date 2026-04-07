@@ -6,6 +6,9 @@ on:
     paths:
       - '**.bicep'
 
+permissions:
+  contents: write
+
 jobs:
   generateArmTemplate:
     name: Generate ARM Template
