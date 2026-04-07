@@ -53,6 +53,54 @@
                 "secretName": "client-secret"
               }
             },
+            "osduEndpoint": {
+              "reference": {
+                "keyVault": {
+                  "id": "[variables('vaultId')]"
+                },
+                "secretName": "osdu-endpoint"
+              }
+            },
+            "azureTenant": {
+              "reference": {
+                "keyVault": {
+                  "id": "[variables('vaultId')]"
+                },
+                "secretName": "azure-tenant"
+              }
+            },
+            "dataPartition": {
+              "reference": {
+                "keyVault": {
+                  "id": "[variables('vaultId')]"
+                },
+                "secretName": "data-partition"
+              }
+            },
+            "legalTag": {
+              "reference": {
+                "keyVault": {
+                  "id": "[variables('vaultId')]"
+                },
+                "secretName": "legal-tag"
+              }
+            },
+            "aclViewer": {
+              "reference": {
+                "keyVault": {
+                  "id": "[variables('vaultId')]"
+                },
+                "secretName": "acl-viewer"
+              }
+            },
+            "aclOwner": {
+              "reference": {
+                "keyVault": {
+                  "id": "[variables('vaultId')]"
+                },
+                "secretName": "acl-owner"
+              }
+            },
             "logLevel": {
               "value": "[parameters('logLevel')]"
             },
@@ -91,19 +139,55 @@
               "name": {
                 "type": "string",
                 "metadata": {
-                  "description": "Experience Lab Unique Number (ex: 9178)"
+                  "description": "Experience Lab instance name"
                 }
               },
               "clientId": {
                 "type": "string",
                 "metadata": {
-                  "description": "Client Id."
+                  "description": "Service principal client ID"
                 }
               },
               "clientSecret": {
+                "type": "securestring",
+                "metadata": {
+                  "description": "Service principal client secret"
+                }
+              },
+              "osduEndpoint": {
                 "type": "string",
                 "metadata": {
-                  "description": "Client Secret."
+                  "description": "OSDU endpoint URL"
+                }
+              },
+              "azureTenant": {
+                "type": "string",
+                "metadata": {
+                  "description": "Azure AD tenant ID"
+                }
+              },
+              "dataPartition": {
+                "type": "string",
+                "metadata": {
+                  "description": "OSDU data partition name"
+                }
+              },
+              "legalTag": {
+                "type": "string",
+                "metadata": {
+                  "description": "Legal tag for loaded data"
+                }
+              },
+              "aclViewer": {
+                "type": "string",
+                "metadata": {
+                  "description": "ACL viewer group"
+                }
+              },
+              "aclOwner": {
+                "type": "string",
+                "metadata": {
+                  "description": "ACL owner group"
                 }
               },
               "logLevel": {
@@ -113,21 +197,21 @@
                 }
               },
               "storageKey": {
-                "type": "string",
+                "type": "securestring",
                 "metadata": {
-                  "description": "Storage Key."
+                  "description": "Experience Lab storage account key"
                 }
               },
               "controlPlaneStorageKey": {
-                "type": "string",
+                "type": "securestring",
                 "metadata": {
-                  "description": "Storage Key."
+                  "description": "Control plane storage account key"
                 }
               },
               "controlPlaneStorageName": {
                 "type": "string",
                 "metadata": {
-                  "description": "Storage Key."
+                  "description": "Control plane storage account name"
                 }
               }
             },
@@ -140,7 +224,7 @@
               {
                 "type": "Microsoft.ContainerInstance/containerGroups",
                 "apiVersion": "2021-10-01",
-                "name": "[concat('open-test-data')]",
+                "name": "open-test-data",
                 "location": "[resourceGroup().location]",
                 "identity": {
                   "type": "userAssigned",
@@ -162,6 +246,14 @@
                         "command": [],
                         "environmentVariables": [
                           {
+                            "name": "OSDU_ENDPOINT",
+                            "value": "[parameters('osduEndpoint')]"
+                          },
+                          {
+                            "name": "AZURE_TENANT",
+                            "value": "[parameters('azureTenant')]"
+                          },
+                          {
                             "name": "CLIENT_ID",
                             "value": "[parameters('clientId')]"
                           },
@@ -170,8 +262,20 @@
                             "secureValue": "[parameters('clientSecret')]"
                           },
                           {
-                            "name": "WORKERS",
-                            "value": "50"
+                            "name": "DATA_PARTITION",
+                            "value": "[parameters('dataPartition')]"
+                          },
+                          {
+                            "name": "LEGAL_TAG",
+                            "value": "[parameters('legalTag')]"
+                          },
+                          {
+                            "name": "ACL_VIEWER",
+                            "value": "[parameters('aclViewer')]"
+                          },
+                          {
+                            "name": "ACL_OWNER",
+                            "value": "[parameters('aclOwner')]"
                           },
                           {
                             "name": "LOG_LEVEL",
