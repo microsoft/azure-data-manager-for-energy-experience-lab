@@ -83,7 +83,7 @@ data-partition-id: {{DATA_PARTITION}}
       "US"
     ],
     "contractId": "A1234",
-    "expirationDate": "2023-12-31",
+    "expirationDate": "2099-01-25",
     "originator": "MyCompany",
     "dataType": "Transferred Data",
     "securityClassification": "Public",
@@ -112,7 +112,7 @@ data-partition-id: {{DATA_PARTITION}}
   "name": "{{DATA_PARTITION}}-{{tag}}",
   "contractId": "A1234",
   "description": "Updated: This is a test tag from Rest Scripts",
-  "expirationDate": "2025-12-25"
+  "expirationDate": "2088-12-25"
 }
 
 

@@ -64,7 +64,7 @@ data-partition-id: {{DATA_PARTITION}}
       "US"
     ],
     "contractId": "A1234",
-    "expirationDate": "2022-12-31",
+    "expirationDate": "2099-01-25",
     "originator": "MyCompany",
     "dataType": "Transferred Data",
     "securityClassification": "Public",
