@@ -16,8 +16,9 @@ describe('LegalTagCreateComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [ LegalTagCreateComponent ],
-      providers: [provideHttpClient(), provideHttpClientTesting()],
       providers: [
+        provideHttpClient(),
+        provideHttpClientTesting(),
         { provide: Router, useValue: routerSpy }
       ]
     })

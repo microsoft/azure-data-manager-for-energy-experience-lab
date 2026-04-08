@@ -12,8 +12,7 @@ describe('AuthorizationService', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [provideHttpClient(), provideHttpClientTesting()],
-      providers: [AuthorizationService]
+      providers: [provideHttpClient(), provideHttpClientTesting(), AuthorizationService]
     });
     service = TestBed.inject(AuthorizationService);
   });

@@ -12,8 +12,7 @@ describe('OsduVersionService', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [provideHttpClient(), provideHttpClientTesting()],
-      providers: [OsduVersionService]
+      providers: [provideHttpClient(), provideHttpClientTesting(), OsduVersionService]
     });
     service = TestBed.inject(OsduVersionService);
   });
