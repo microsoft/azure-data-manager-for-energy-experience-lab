@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 import { TestBed } from '@angular/core/testing';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { MsalService } from '@azure/msal-angular';
 import { provideHttpClient } from '@angular/common/http';
@@ -28,6 +29,7 @@ describe('AppComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
+      schemas: [NO_ERRORS_SCHEMA],
       imports: [
         MatSidenavModule,
         NoopAnimationsModule

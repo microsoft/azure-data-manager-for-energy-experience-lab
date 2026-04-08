@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 
 import { LegalTagFormComponent } from './legal-tag-form.component';
 
@@ -11,6 +12,7 @@ describe('LegalTagFormComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
+      schemas: [NO_ERRORS_SCHEMA],
       declarations: [ LegalTagFormComponent ]
     })
     .compileComponents();
