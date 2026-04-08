@@ -13,7 +13,7 @@ jobs:
         shell: bash
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Validate main script
         run: bash -n experiencelab.sh
@@ -32,8 +32,8 @@ jobs:
         working-directory: ./developer-portal
 
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: '22'
 
@@ -74,7 +74,7 @@ jobs:
         shell: bash
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Validate TNO download script
         run: bash -n open-test-data/downloadTnoData.sh
