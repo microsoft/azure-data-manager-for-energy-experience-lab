@@ -12,6 +12,8 @@ jobs:
     name: Create Assets for Release
     needs: validate
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
