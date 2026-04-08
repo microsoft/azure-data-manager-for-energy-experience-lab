@@ -2,7 +2,8 @@
 // Licensed under the MIT License.
 
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 
 import { GroupAssignmentComponent } from './group-assignment.component';
 
@@ -13,7 +14,7 @@ describe('GroupAssignmentComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [ GroupAssignmentComponent ],
-      imports: [HttpClientTestingModule]
+      providers: [provideHttpClient(), provideHttpClientTesting()]
     })
     .compileComponents();
     fixture = TestBed.createComponent(GroupAssignmentComponent);

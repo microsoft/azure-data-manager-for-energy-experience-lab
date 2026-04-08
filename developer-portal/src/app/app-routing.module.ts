@@ -5,69 +5,67 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { HomeComponent } from './home/home.component';
 import { ProfileComponent } from './profile/profile.component';
-import { MsalGuard } from '@azure/msal-angular';
 import { RestComponent } from './rest/rest.component';
 import { SwaggerComponent } from './swagger/swagger.component';
 import { UserOverviewComponent } from './user-management/user-overview/user-overview.component';
 import { LegalTagOverviewComponent } from './legal-tag-management/legal-tag-overview/legal-tag-overview.component';
-import { UserGuard } from './authorization/guards/user.guard';
 import { UnauthorizedComponent } from './authorization/components/unauthorized/unauthorized.component';
 import { PowerBiComponent } from './power-bi/power-bi.component';
 import { DataLoadComponent } from './data-load/data-load.component';
 import { LegalTagDetailComponent } from './legal-tag-management/legal-tag-detail/legal-tag-detail.component';
 import { LegalTagCreateComponent } from './legal-tag-management/legal-tag-create/legal-tag-create.component';
+import { authGuards } from './authorization/guards/auth.guards';
 
 const routes: Routes = [
-
   {
     path: '',
     component: HomeComponent,
-    canActivate: [MsalGuard, UserGuard]
+    canActivate: authGuards,
   },
   {
     path: 'profile',
     component: ProfileComponent,
-    canActivate: [MsalGuard, UserGuard]
+    canActivate: authGuards,
   },
   {
     path: 'rest',
     component: RestComponent,
-    canActivate: [MsalGuard, UserGuard]
+    canActivate: authGuards,
   },
   {
     path: 'swagger',
     component: SwaggerComponent,
-    canActivate: [MsalGuard, UserGuard]
+    canActivate: authGuards,
   },
   {
     path: 'users',
     component: UserOverviewComponent,
-    canActivate: [MsalGuard, UserGuard]
+    canActivate: authGuards,
   },
   {
     path: 'legal',
     component: LegalTagOverviewComponent,
-    canActivate: [MsalGuard, UserGuard]
+    canActivate: authGuards,
   },
   {
     path: 'legal/new',
     component: LegalTagCreateComponent,
-    canActivate: [MsalGuard, UserGuard]
+    canActivate: authGuards,
   },
   {
     path: 'legal/:id',
     component: LegalTagDetailComponent,
-    canActivate: [MsalGuard, UserGuard]
+    canActivate: authGuards,
   },
   {
     path: 'powerbi',
     component: PowerBiComponent,
-    canActivate: [MsalGuard, UserGuard]
+    canActivate: authGuards,
   },
   {
     path: 'dataload',
     component: DataLoadComponent,
-    canActivate: [MsalGuard, UserGuard]
+    canActivate: authGuards,
   },
   {
     path: 'unauthorized',
@@ -76,7 +74,6 @@ const routes: Routes = [
   {
     path: '**',
     redirectTo: '',
-    canActivate: [MsalGuard, UserGuard]
   },
 ];
 
@@ -84,7 +81,7 @@ const isIframe = window !== window.parent && !window.opener;
 
 @NgModule({
   imports: [RouterModule.forRoot(routes, {
-    initialNavigation: !isIframe ? 'enabled' : 'disabled' // Don't perform initial navigation in iframes
+    initialNavigation: !isIframe ? 'enabledBlocking' : 'disabled'
   })],
   exports: [RouterModule]
 })

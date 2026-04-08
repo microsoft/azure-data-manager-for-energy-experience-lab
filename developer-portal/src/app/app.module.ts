@@ -1,7 +1,7 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { NgModule } from '@angular/core';
-import { HTTP_INTERCEPTORS, HttpClientModule } from "@angular/common/http";
+import { APP_INITIALIZER, NgModule } from '@angular/core';
+import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from "@angular/common/http";
 import { ReactiveFormsModule } from '@angular/forms';
 
 import { MatButtonModule } from '@angular/material/button';
@@ -15,7 +15,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatSelectModule } from '@angular/material/select';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { MatTableModule } from '@angular/material/table'
+import { MatTableModule } from '@angular/material/table';
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
@@ -30,8 +30,8 @@ import { AppComponent } from './app.component';
 import { HomeComponent } from './home/home.component';
 import { ProfileComponent } from './profile/profile.component';
 
-import { MsalModule, MsalRedirectComponent, MsalGuard, MsalInterceptor } from '@azure/msal-angular'; // Import MsalInterceptor
-import { InteractionType, PublicClientApplication } from '@azure/msal-browser';
+import { MsalModule, MsalRedirectComponent, MsalGuard, MsalInterceptor, MsalBroadcastService, MsalService, MSAL_INSTANCE, MSAL_GUARD_CONFIG, MSAL_INTERCEPTOR_CONFIG } from '@azure/msal-angular';
+import { InteractionType, IPublicClientApplication, PublicClientApplication } from '@azure/msal-browser';
 import { environment } from 'src/environments/environment';
 import { RestComponent } from './rest/rest.component';
 import { SwaggerComponent } from './swagger/swagger.component';
@@ -50,8 +50,75 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { LegalTagFormComponent } from './legal-tag-management/legal-tag-form/legal-tag-form.component';
 import { LegalTagDetailComponent } from './legal-tag-management/legal-tag-detail/legal-tag-detail.component';
 import { LegalTagCreateComponent } from './legal-tag-management/legal-tag-create/legal-tag-create.component';
+import { MockMsalService, MockMsalBroadcastService } from './mocks/mock-msal.service';
+import { MockApiInterceptor } from './mocks/mock-api.interceptor';
 
-const isIE = window.navigator.userAgent.indexOf('MSIE ') > -1 || window.navigator.userAgent.indexOf('Trident/') > -1;
+export function MSALInstanceFactory(): IPublicClientApplication {
+  return new PublicClientApplication({
+    auth: {
+      clientId: environment.clientId,
+      authority: `https://login.microsoftonline.com/${environment.tenantId}`,
+      redirectUri: environment.redirectUrl,
+    },
+    cache: {
+      cacheLocation: 'localStorage',
+      storeAuthStateInCookie: false,
+    }
+  });
+}
+
+export function MSALInitializerFactory(msalInstance: IPublicClientApplication): () => Promise<void> {
+  return () => msalInstance.initialize();
+}
+
+const msalImports = environment.useMocks ? [] : [MsalModule];
+
+const msalProviders = environment.useMocks
+  ? [
+      { provide: MsalService, useClass: MockMsalService },
+      { provide: MsalBroadcastService, useClass: MockMsalBroadcastService },
+      { provide: HTTP_INTERCEPTORS, useClass: MockApiInterceptor, multi: true },
+    ]
+  : [
+      {
+        provide: MSAL_INSTANCE,
+        useFactory: MSALInstanceFactory,
+      },
+      {
+        provide: MSAL_GUARD_CONFIG,
+        useValue: {
+          interactionType: InteractionType.Redirect,
+        },
+      },
+      {
+        provide: MSAL_INTERCEPTOR_CONFIG,
+        useValue: {
+          interactionType: InteractionType.Redirect,
+          protectedResourceMap: new Map([
+            ['https://graph.microsoft.com/v1.0/me', ['user.read']],
+            ['*', [`${environment.clientId}/${environment.scopes}`]]
+          ]),
+        },
+      },
+      {
+        provide: HTTP_INTERCEPTORS,
+        useClass: MsalInterceptor,
+        multi: true,
+      },
+      {
+        provide: APP_INITIALIZER,
+        useFactory: MSALInitializerFactory,
+        deps: [MSAL_INSTANCE],
+        multi: true,
+      },
+      MsalService,
+      MsalBroadcastService,
+      MsalGuard,
+    ];
+
+const bootstrapComponents = environment.useMocks
+  ? [AppComponent]
+  : [AppComponent, MsalRedirectComponent];
 
 @NgModule({
   declarations: [
@@ -87,7 +154,6 @@ const isIE = window.navigator.userAgent.indexOf('MSIE ') > -1 || window.navigato
     MatSidenavModule,
     MatIconModule,
     MatDividerModule,
-    HttpClientModule,
     ReactiveFormsModule,
     MatInputModule,
     MatFormFieldModule,
@@ -98,34 +164,12 @@ const isIE = window.navigator.userAgent.indexOf('MSIE ') > -1 || window.navigato
     MatPaginatorModule,
     MatSortModule,
     OverlayModule,
-    MsalModule.forRoot(new PublicClientApplication({
-      auth: {
-        clientId: environment.clientId,
-        authority: `https://login.microsoftonline.com/${environment.tenantId}`,
-        redirectUri: environment.redirectUrl,
-      },
-      cache: {
-        cacheLocation: 'localStorage',
-        storeAuthStateInCookie: isIE,
-      }
-    }), {
-      interactionType: InteractionType.Redirect,
-      }, {
-      interactionType: InteractionType.Redirect,
-      protectedResourceMap: new Map([
-          ['https://graph.microsoft.com/v1.0/me', ['user.read']],
-          ['*', [`${environment.clientId}/${environment.scopes}`]]
-      ])
-    })
+    ...msalImports,
   ],
   providers: [
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: MsalInterceptor,
-      multi: true
-    },
-    MsalGuard
+    provideHttpClient(withInterceptorsFromDi()),
+    ...msalProviders,
   ],
-  bootstrap: [AppComponent, MsalRedirectComponent]
+  bootstrap: bootstrapComponents,
 })
 export class AppModule { }

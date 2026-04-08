@@ -4,7 +4,8 @@
 import { TestBed } from '@angular/core/testing';
 import { MsalService, MsalBroadcastService } from '@azure/msal-angular';
 import { InteractionStatus } from '@azure/msal-browser';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { Observable, of } from 'rxjs';
 
 import { ProfileService } from './profile.service';
@@ -24,10 +25,9 @@ describe('ProfileService', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [
-        HttpClientTestingModule
-      ],
       providers: [
+        provideHttpClient(),
+        provideHttpClientTesting(),
         { provide: MsalService, useValue: msalServiceStub },
         { provide: MsalBroadcastService, useValue: msalBroadcastServiceStub }
       ]

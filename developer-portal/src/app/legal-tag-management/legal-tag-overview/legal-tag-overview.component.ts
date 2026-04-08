@@ -9,6 +9,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { ProcessStatus } from 'src/app/user-management/models/user-management-status.enum';
 
 @Component({
+  standalone: false,
   selector: 'app-legal-tag-overview',
   templateUrl: './legal-tag-overview.component.html',
   styleUrls: ['./legal-tag-overview.component.css'],

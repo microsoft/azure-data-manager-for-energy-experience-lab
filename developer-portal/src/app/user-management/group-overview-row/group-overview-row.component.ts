@@ -9,6 +9,7 @@ import { GroupAssignmentEventService } from '../services/assignment-event.servic
 import { UserManagementService } from '../services/user-management.service';
 
 @Component({
+  standalone: false,
   selector: 'app-group-overview-row',
   templateUrl: './group-overview-row.component.html',
   styleUrls: ['./group-overview-row.component.css']

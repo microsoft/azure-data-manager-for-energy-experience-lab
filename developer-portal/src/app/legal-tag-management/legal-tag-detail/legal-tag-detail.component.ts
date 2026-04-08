@@ -9,6 +9,7 @@ import { LegalTag } from '../models/legal-tag';
 import { LegalTagManagementService } from '../services/legal-tag-management.service';
 
 @Component({
+  standalone: false,
   selector: 'app-legal-tag-detail',
   templateUrl: './legal-tag-detail.component.html',
   styleUrls: ['./legal-tag-detail.component.css']

@@ -8,6 +8,7 @@ import { ProcessStatus } from 'src/app/user-management/models/user-management-st
 import { LegalTagManagementService } from '../services/legal-tag-management.service';
 
 @Component({
+  standalone: false,
   selector: 'app-legal-tag-create',
   templateUrl: './legal-tag-create.component.html',
   styleUrls: ['./legal-tag-create.component.css']

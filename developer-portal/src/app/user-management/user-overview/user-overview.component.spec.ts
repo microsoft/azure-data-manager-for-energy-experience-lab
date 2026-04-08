@@ -2,7 +2,8 @@
 // Licensed under the MIT License.
 
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { OverlayModule } from "@angular/cdk/overlay";
@@ -18,8 +19,11 @@ describe('UserOverviewComponent', () => {
     await TestBed.configureTestingModule({
       declarations: [ UserOverviewComponent ],
       imports: [
-        HttpClientTestingModule,
         OverlayModule
+      ],
+      providers: [
+        provideHttpClient(),
+        provideHttpClientTesting()
       ]
     })
     .compileComponents().then(() => {

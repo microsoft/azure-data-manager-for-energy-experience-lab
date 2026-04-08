@@ -2,7 +2,8 @@
 // Licensed under the MIT License.
 
 import { TestBed } from '@angular/core/testing';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 
 import { OsduVersionService } from './osdu-version.service';
 
@@ -11,7 +12,7 @@ describe('OsduVersionService', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule],
+      providers: [provideHttpClient(), provideHttpClientTesting()],
       providers: [OsduVersionService]
     });
     service = TestBed.inject(OsduVersionService);

@@ -11,6 +11,7 @@ import { ProcessStatus } from '../models/user-management-status.enum';
 import { UserProfile } from 'src/app/models/user-profile';
 
 @Component({
+  standalone: false,
   selector: 'app-user-creation',
   templateUrl: './user-creation.component.html',
   styleUrls: ['./user-creation.component.css']

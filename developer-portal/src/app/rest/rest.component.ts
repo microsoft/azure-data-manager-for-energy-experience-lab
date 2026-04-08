@@ -6,6 +6,7 @@ import { environment } from 'src/environments/environment';
 import { ProfileService } from '../services/profile.service';
 
 @Component({
+  standalone: false,
   selector: 'app-rest',
   templateUrl: './rest.component.html',
   styleUrls: ['./rest.component.css']

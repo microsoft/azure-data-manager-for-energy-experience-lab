@@ -2,7 +2,8 @@
 // Licensed under the MIT License.
 
 import { TestBed } from '@angular/core/testing';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { LegalTagManagementService } from './legal-tag-management.service';
 
 describe('LegalTagManagementService', () => {
@@ -10,8 +11,9 @@ describe('LegalTagManagementService', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [
-        HttpClientTestingModule
+      providers: [
+        provideHttpClient(),
+        provideHttpClientTesting()
       ]
     });
     service = TestBed.inject(LegalTagManagementService);
