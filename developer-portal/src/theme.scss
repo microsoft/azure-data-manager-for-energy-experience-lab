@@ -106,15 +106,27 @@ $primary-color: mat.m2-define-palette($portal-primary-color-palette);
 $accent-color: mat.m2-define-palette($portal-accent-color-palette);
 $warn-color: mat.m2-define-palette($portal-warn-color-palette);
 
+$portal-typography: mat.m2-define-typography-config(
+  $font-family: '"Segoe UI Web (West European)","Segoe UI",-apple-system,BlinkMacSystemFont,Roboto,"Helvetica Neue",sans-serif',
+  $headline-5: mat.m2-define-typography-level(36px, 44px, 400),
+  $headline-6: mat.m2-define-typography-level(28px, 36px, 500),
+  $subtitle-1: mat.m2-define-typography-level(22px, 30px, 400),
+  $subtitle-2: mat.m2-define-typography-level(20px, 28px, 500),
+  $body-1: mat.m2-define-typography-level(20px, 30px, 400),
+  $body-2: mat.m2-define-typography-level(20px, 30px, 500),
+  $caption: mat.m2-define-typography-level(16px, 22px, 400),
+  $button: mat.m2-define-typography-level(18px, 18px, 500),
+);
+
 $portal-theme: mat.m2-define-light-theme((
   color: (
     primary: $primary-color,
     accent: $accent-color,
     warn: $warn-color,
   ),
-  typography: mat.m2-define-typography-config(
-    $font-family: '"Segoe UI Web (West European)","Segoe UI",-apple-system,BlinkMacSystemFont,Roboto,"Helvetica Neue",sans-serif',
-  ),
+  typography: $portal-typography,
+  density: -1,
 ));
 
 @include mat.all-component-themes($portal-theme);
+@include mat.typography-hierarchy($portal-typography);

@@ -69,7 +69,7 @@ export const MOCK_LEGAL_TAGS = [
 ];
 
 export const MOCK_VERSION_INFO = {
-  version: '0.17.0',
+  version: '0.29.0',
   artifactId: 'entitlements-v2',
   groupId: 'org.opengroup.osdu',
 };
