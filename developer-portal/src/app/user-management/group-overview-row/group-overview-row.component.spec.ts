@@ -20,6 +20,7 @@ describe('GroupOverviewRowComponent', () => {
       schemas: [NO_ERRORS_SCHEMA],
       imports: [
         MatSelectModule,
+        MatSelectionList,
         OverlayModule
       ],
       providers: [
@@ -27,8 +28,7 @@ describe('GroupOverviewRowComponent', () => {
         provideHttpClientTesting()
       ],
       declarations: [
-        GroupOverviewRowComponent,
-        MatSelectionList
+        GroupOverviewRowComponent
       ]
     })
     .compileComponents();
