@@ -1,7 +1,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-FROM mcr.microsoft.com/mirror/docker/library/node:22 as build
+FROM mcr.microsoft.com/mirror/docker/library/node:20 AS build
 
 WORKDIR /app
 
@@ -16,7 +16,7 @@ COPY . /app
 # Build the site
 RUN npm run build
 
-FROM mcr.microsoft.com/mirror/docker/library/nginx:1.27
+FROM mcr.microsoft.com/mirror/docker/library/nginx:1.25
 
 COPY nginx.conf /etc/nginx/nginx.conf
 
