@@ -11,6 +11,7 @@ import { UserManagementService } from '../services/user-management.service';
 import { GroupAssignmentAction } from './group-assignment-action.enum';
 
 @Component({
+  standalone: false,
   selector: 'app-group-assignment',
   templateUrl: './group-assignment.component.html',
   styleUrls: ['./group-assignment.component.css']

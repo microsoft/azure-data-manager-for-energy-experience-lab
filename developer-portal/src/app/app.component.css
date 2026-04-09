@@ -11,16 +11,16 @@ Licensed under the MIT License. */
 }
 
 .display-name {
-  max-height: 20px;
-  font-size: 18px;
+  max-height: 26px;
+  font-size: 22px;
 }
 
 .email {
-  font-size: 15px;
+  font-size: 18px;
 }
 
 .menu-option-label {
-  margin-left: 4px;
+  margin-left: 8px;
 }
 
 .toolbar {
@@ -29,14 +29,13 @@ Licensed under the MIT License. */
   max-height: 48px;
 }
 
-
 .menu-navigation {
-  margin: 16px;
-  width: 250px;
+  margin: 0;
+  width: 340px;
   border-right: none;
   background: #0078D4;
   color: white;
-  padding: 16px;
+  padding: 20px;
   text-align: center;
 }
 
@@ -48,6 +47,8 @@ Licensed under the MIT License. */
   padding-right: 12px;
   padding-top: 1px;
   padding-bottom: 1px;
+  font-size: 20px;
+  line-height: 1.5;
 }
 
 .menu-navigation-container {
@@ -59,12 +60,20 @@ Licensed under the MIT License. */
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  font-size: 1rem;
+  color: white !important;
+  --mdc-text-button-label-text-color: white;
+  --mdc-text-button-label-text-size: 22px;
+  --mdc-text-button-label-text-weight: 400;
+  margin-bottom: 2px;
+}
+
+.menu-navigation .mat-icon {
+  color: white !important;
 }
 
 .divider {
-  margin-top: 16px;
-  margin-bottom: 16px;
+  margin-top: 12px;
+  margin-bottom: 12px;
   background-color: ghostwhite;
 }
 
@@ -74,6 +83,6 @@ Licensed under the MIT License. */
   bottom: 0;
   left: 0;
   margin-left: 65px;
-  font-size: 13px;
+  font-size: 16px;
   margin-bottom: 10px;
 }

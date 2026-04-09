@@ -2,9 +2,11 @@
 // Licensed under the MIT License.
 
 import { TestBed } from '@angular/core/testing';
-import { RouterTestingModule } from '@angular/router/testing';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
+import { provideRouter } from '@angular/router';
 import { MsalService } from '@azure/msal-angular';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { Observable, of } from 'rxjs';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
@@ -15,21 +17,20 @@ import { ProfileService } from './services/profile.service';
 describe('AppComponent', () => {
   const msalServiceStub: Partial<MsalService> = {
     logoutRedirect(request?: any): Observable<void> {
-      return of(null);
+      return of(undefined);
     }
   };
 
   const profileServiceStub: Partial<ProfileService> = {
     getUserProfile(request?: any):Observable<UserProfile> {
-      return of(null);
+      return of(null as any);
     }
   };
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
+      schemas: [NO_ERRORS_SCHEMA],
       imports: [
-        RouterTestingModule,
-        HttpClientTestingModule,
         MatSidenavModule,
         NoopAnimationsModule
       ],
@@ -37,6 +38,9 @@ describe('AppComponent', () => {
         AppComponent
       ],
       providers: [
+        provideRouter([]),
+        provideHttpClient(),
+        provideHttpClientTesting(),
         { provide: MsalService, useValue: msalServiceStub },
         { provide: ProfileService, useValue: profileServiceStub }
       ]

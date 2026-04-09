@@ -4,7 +4,18 @@
 
 The developer portal is a getting started Angular website that includes instructions for calling Microsoft Azure Data Manager for Energy APIs, functions for retrieving Authorization tokens, sample Power BI integration, basic user management, and more. It can be created from a control plane or run locally against an existing service instance.
 
-## Run via Local Machine
+## Quick Start (Mock Mode)
+
+Run the portal locally with mock data — no Azure backend required:
+
+```bash
+npm install
+npm run start:mock
+```
+
+Access at <http://localhost:4200>. Mock mode provides fake users, legal tags, and group data so you can explore the full UI without an Azure Data Manager for Energy instance.
+
+## Run with a Live Backend
 
 ### Requirements
 
@@ -23,21 +34,23 @@ You need to add a Single Page Application (SPA) redirect URL to your AAD App
 
 ### Setting the Environment File
 
-Create an environment variable file at `src\environments\environment.ts` in the following format:
+Create an environment variable file at `src/environments/environment.ts` in the following format:
 
 ```typescript
 export const environment = {
+  useMocks: false,
   tenantId: "00000000-0000-0000-0000-000000000000", // Your AAD tenant's ID
   clientId: "00000000-0000-0000-0000-000000000000", // Your AAD app's client ID
   apiHost: "platform0000.energy.azure.com", // Your Azure Data Manager for Energy instance's endpoint
   dataPartition: "opendes",
   scopes: ".default openid profile offline_access",
   redirectUrl: "http://localhost:80",
+  instanceIdentifier: "0000",
   instanceName: "platform0000",
   domain: "dataservices.energy",
   buildNumber: "local",
   powerBiConnectorFileName: "connector.mez",
-  tnoTemplateSpecUrl: "dataservices.energy"
+  tnoTemplateSpecUrl: ""
 };
 ```
 
@@ -60,7 +73,7 @@ The website can be run in a docker container with:
 docker compose up -d
 ```
 
-This will serve the website and support hot reloading using [Dockerfile-local](Dockerfile-local).
+This will serve the website in mock mode with hot reloading using [Dockerfile-local](Dockerfile-local).
 
 Access the website at <http://localhost:80>
 

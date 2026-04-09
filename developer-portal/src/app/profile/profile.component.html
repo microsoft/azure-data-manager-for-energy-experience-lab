@@ -56,8 +56,8 @@
                 </ng-container>
                 <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
                 <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-                <tr class="mat-row" *matNoDataRow >
-                    <td class="mat-cell" colspan="2" *ngIf="!this.isLoadingGroups || this.failedToLoadGroups">No data matching the filter "{{input.value}}"</td>
+                <tr class="mat-mdc-row" *matNoDataRow >
+                    <td class="mat-mdc-cell" colspan="2" *ngIf="!this.isLoadingGroups || this.failedToLoadGroups">No data matching the filter "{{input.value}}"</td>
                 </tr>
             </table>
         </div>

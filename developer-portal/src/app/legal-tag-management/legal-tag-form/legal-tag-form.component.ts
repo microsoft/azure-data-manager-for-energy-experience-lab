@@ -5,6 +5,7 @@ import { Component, Input } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 
 @Component({
+  standalone: false,
   selector: 'app-legal-tag-form',
   templateUrl: './legal-tag-form.component.html',
   styleUrls: ['./legal-tag-form.component.css']

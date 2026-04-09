@@ -106,9 +106,9 @@
         *matRowDef="let row; columns: ['expandedDetail']"
         class="example-detail-row">
       </tr>
-      <tr class="mat-row" *matNoDataRow>
+      <tr class="mat-mdc-row" *matNoDataRow>
         <td
-          class="mat-cell"
+          class="mat-mdc-cell"
           colspan="2"
           *ngIf="this.failedToLoadLegalTags">
           No legal tags matching the filter "{{ input.value }}"

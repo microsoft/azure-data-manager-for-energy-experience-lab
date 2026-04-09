@@ -10,6 +10,7 @@ import { ProcessStatus } from '../models/user-management-status.enum';
 import { UserProfile } from 'src/app/models/user-profile';
 
 @Component({
+  standalone: false,
   selector: 'app-user-edit',
   templateUrl: './user-edit.component.html',
   styleUrls: ['./user-edit.component.css']
@@ -20,7 +21,7 @@ export class UserEditComponent implements OnInit {
 
   public editUserForm = new FormGroup({
     objectId: new FormControl({value: '', disabled: true}, [Validators.required]),
-    group: new FormControl([Validators.required])
+    group: new FormControl('', [Validators.required])
   });
   public eUserEditStatus = ProcessStatus;
   public editStatus: ProcessStatus;
@@ -53,16 +54,17 @@ export class UserEditComponent implements OnInit {
    */
   public editUser() {
     this.editStatus = ProcessStatus.InProgress
-    const groupsToRemove = new Set(Object.values(UserGroup));
-    groupsToRemove.delete(this.editUserForm.value.group);
+    const selectedGroup = this.editUserForm.value.group as string;
+    const groupsToRemove = new Set<string>(Object.values(UserGroup));
+    groupsToRemove.delete(selectedGroup);
     groupsToRemove.delete(UserGroup.Users);
 
-    this.userManagementService.removeGroup(this.editUserForm.getRawValue().objectId, this.editUserForm.value.group).subscribe({
+    this.userManagementService.removeGroup(this.editUserForm.getRawValue().objectId, selectedGroup).subscribe({
       error: (_) =>{
-        this.assignGroup(this.editUserForm.getRawValue().objectId, this.editUserForm.value.group);
+        this.assignGroup(this.editUserForm.getRawValue().objectId, selectedGroup);
       },
       complete: () => {
-        this.assignGroup(this.editUserForm.getRawValue().objectId, this.editUserForm.value.group);
+        this.assignGroup(this.editUserForm.getRawValue().objectId, selectedGroup);
 
       }
     })

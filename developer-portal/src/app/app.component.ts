@@ -13,6 +13,7 @@ import { UserGroup } from './models/user-group.enum';
 import { OsduVersionService } from './services/osdu-version.service';
 
 @Component({
+  standalone: false,
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']

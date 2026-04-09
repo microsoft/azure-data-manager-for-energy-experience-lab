@@ -6,6 +6,7 @@ import { Component, OnInit } from '@angular/core';
 declare const SwaggerUIBundle: any;
 
 @Component({
+  standalone: false,
   selector: 'app-swagger',
   templateUrl: './swagger.component.html',
   styleUrls: ['./swagger.component.css']

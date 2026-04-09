@@ -2,7 +2,9 @@
 // Licensed under the MIT License.
 
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 
 import { UserEditComponent } from './user-edit.component';
 
@@ -12,8 +14,9 @@ describe('UserEditComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
+      schemas: [NO_ERRORS_SCHEMA],
       declarations: [ UserEditComponent ],
-      imports: [ HttpClientTestingModule ]
+      providers: [provideHttpClient(), provideHttpClientTesting()]
     })
     .compileComponents();
   });

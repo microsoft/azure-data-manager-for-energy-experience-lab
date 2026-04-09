@@ -2,7 +2,9 @@
 // Licensed under the MIT License.
 
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { LegalTagOverviewComponent } from './legal-tag-overview.component';
 
 describe('LegalTagOverviewComponent', () => {
@@ -11,8 +13,9 @@ describe('LegalTagOverviewComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
+      schemas: [NO_ERRORS_SCHEMA],
       declarations: [ LegalTagOverviewComponent ],
-      imports: [ HttpClientTestingModule ]
+      providers: [provideHttpClient(), provideHttpClientTesting()]
     })
     .compileComponents();
     fixture = TestBed.createComponent(LegalTagOverviewComponent);

@@ -8,6 +8,7 @@ import { ProcessStatus } from '../models/user-management-status.enum';
 import { UserManagementService } from '../services/user-management.service';
 
 @Component({
+  standalone: false,
   selector: 'app-user-delete',
   templateUrl: './user-delete.component.html',
   styleUrls: ['./user-delete.component.css']

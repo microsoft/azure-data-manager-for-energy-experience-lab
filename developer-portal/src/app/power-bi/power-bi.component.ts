@@ -5,6 +5,7 @@ import { Component } from '@angular/core';
 import { environment } from 'src/environments/environment';
 
 @Component({
+  standalone: false,
   selector: 'app-power-bi',
   templateUrl: './power-bi.component.html'
 })

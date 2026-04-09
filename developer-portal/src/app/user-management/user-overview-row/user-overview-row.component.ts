@@ -6,6 +6,7 @@ import { UserProfile } from 'src/app/models/user-profile';
 import { UserGroup } from 'src/app/models/user-group.enum';
 
 @Component({
+  standalone: false,
   selector: 'app-user-overview-row',
   templateUrl: './user-overview-row.component.html',
   styleUrls: ['./user-overview-row.component.css']
