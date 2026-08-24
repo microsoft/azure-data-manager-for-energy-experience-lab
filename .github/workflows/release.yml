@@ -16,7 +16,7 @@ jobs:
       contents: write
     steps:
       - name: Checkout code
-        uses: actions/checkout@a37ce9120846195fa4ece8f58b268e6043cb2f26 # v3.7.0
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Tokenize portal version
         uses: cschleiden/replace-tokens@63252851d87eb5cb853019ba8538b5c51813779d # v1.4
@@ -32,7 +32,7 @@ jobs:
         run: zip -r rest-scripts.zip rest-scripts
 
       - name: Bicep build ARM template
-        uses: Azure/bicep-build-action@c333f970fb0daae2241062b5b7acf30a97f696c9 # v1.0.0
+        uses: Azure/bicep-build-action@d2a88e5c7150cd562f3e8b8f361560db2cb4d5c5 # v1.0.1
         with:
           bicepFilePath: ./control-plane/main.bicep
           outputFilePath: ./azuredeploy.json
@@ -41,7 +41,7 @@ jobs:
         run: cp data-load/open-test-data/Dockerfile Dockerfile-open-test-data
 
       - name: Upload artifacts to release
-        uses: softprops/action-gh-release@de2c0eb89ae2a093876385947365aca7b0e5f844 # v0.1.15
+        uses: softprops/action-gh-release@3d0d9888cb7fd7b750713d6e236d1fcb99157228 # v3.0.2
         with:
           tag_name: ${{ github.ref_name }}
           files: |
